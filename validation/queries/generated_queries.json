@@ -1,0 +1,482 @@
+[
+  {
+    "query_id": "e181b74a-c430-4317-9094-4c71c6c65113",
+    "question": "What are the most effective ways to manage and control Varroa mite infestations in my hives?",
+    "ground_truth_intent": "general",
+    "generation_strategy": "pdf_chunk",
+    "expected_sources": [
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-333.pdf#chunk_0"
+    ],
+    "ground_truth_documents": [
+      "ENTO-333.pdf"
+    ],
+    "requires_personal_data": false,
+    "metadata": {}
+  },
+  {
+    "query_id": "0ccd89ea-cc58-4c0f-a1c5-f436b1eba06c",
+    "question": "What do small hive beetles look like and how can I identify them in my hive?",
+    "ground_truth_intent": "general",
+    "generation_strategy": "pdf_chunk",
+    "expected_sources": [
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-338.pdf#chunk_2"
+    ],
+    "ground_truth_documents": [
+      "ENTO-338.pdf"
+    ],
+    "requires_personal_data": false,
+    "metadata": {}
+  },
+  {
+    "query_id": "24376003-9bc3-442e-a6bc-a245ab971cbe",
+    "question": "How can I use entrance reducers to reduce drift and help control Varroa mites?",
+    "ground_truth_intent": "general",
+    "generation_strategy": "pdf_chunk",
+    "expected_sources": [
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-333.pdf#chunk_4"
+    ],
+    "ground_truth_documents": [
+      "ENTO-333.pdf"
+    ],
+    "requires_personal_data": false,
+    "metadata": {}
+  },
+  {
+    "query_id": "badc94d6-9ded-4239-862a-11d7aa86c37f",
+    "question": "How can I prevent small hive beetles from getting into my hive?",
+    "ground_truth_intent": "general",
+    "generation_strategy": "pdf_chunk",
+    "expected_sources": [
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-338.pdf#chunk_0"
+    ],
+    "ground_truth_documents": [
+      "ENTO-338.pdf"
+    ],
+    "requires_personal_data": false,
+    "metadata": {}
+  },
+  {
+    "query_id": "6096086b-5cb0-4f9a-984c-9232415b1dfe",
+    "question": "When is the best time to split a hive to prevent swarming?",
+    "ground_truth_intent": "general",
+    "generation_strategy": "pdf_chunk",
+    "expected_sources": [
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "Beekeeping%20Year%20-%20tabloid%20size25ENG.pdf#chunk_3"
+    ],
+    "ground_truth_documents": [
+      "Beekeeping%20Year%20-%20tabloid%20size25ENG.pdf"
+    ],
+    "requires_personal_data": false,
+    "metadata": {}
+  },
+  {
+    "query_id": "b56fb8b9-01fb-4d59-b525-0d875dfc249c",
+    "question": "What damage do Varroa mites cause to my honey bee colonies?",
+    "ground_truth_intent": "general",
+    "generation_strategy": "pdf_chunk",
+    "expected_sources": [
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-331.pdf#chunk_0"
+    ],
+    "ground_truth_documents": [
+      "ENTO-331.pdf"
+    ],
+    "requires_personal_data": false,
+    "metadata": {}
+  },
+  {
+    "query_id": "41aefda3-ec71-4908-b970-7ebfe42be564",
+    "question": "How do I use a sticky board to monitor Varroa mites in my hive?",
+    "ground_truth_intent": "general",
+    "generation_strategy": "pdf_chunk",
+    "expected_sources": [
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-332.pdf#chunk_3"
+    ],
+    "ground_truth_documents": [
+      "ENTO-332.pdf"
+    ],
+    "requires_personal_data": false,
+    "metadata": {}
+  },
+  {
+    "query_id": "ce216141-3e96-4b24-bea6-601eb4199d36",
+    "question": "When should I harvest my honey to get the best results?",
+    "ground_truth_intent": "general",
+    "generation_strategy": "pdf_chunk",
+    "expected_sources": [
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "Beekeeping%20Year%20-%20tabloid%20size25ENG.pdf#chunk_4"
+    ],
+    "ground_truth_documents": [
+      "Beekeeping%20Year%20-%20tabloid%20size25ENG.pdf"
+    ],
+    "requires_personal_data": false,
+    "metadata": {}
+  },
+  {
+    "query_id": "a52d2c32-ec96-4218-8ec6-69b6df7c7466",
+    "question": "What are the most effective ways to control varroa mites in my hives?",
+    "ground_truth_intent": "general",
+    "generation_strategy": "pdf_chunk",
+    "expected_sources": [
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "HBHC-Guide_Varroa-Mgmt_8thEd-082422.pdf#chunk_4"
+    ],
+    "ground_truth_documents": [
+      "HBHC-Guide_Varroa-Mgmt_8thEd-082422.pdf"
+    ],
+    "requires_personal_data": false,
+    "metadata": {}
+  },
+  {
+    "query_id": "b9a59b05-6bc4-4deb-9360-6c19d95f900d",
+    "question": "At what temperature should I start feeding my bees sugar water to encourage wax production?",
+    "ground_truth_intent": "general",
+    "generation_strategy": "pdf_chunk",
+    "expected_sources": [
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "Beekeeping%20Year%20-%20tabloid%20size25ENG.pdf#chunk_2"
+    ],
+    "ground_truth_documents": [
+      "Beekeeping%20Year%20-%20tabloid%20size25ENG.pdf"
+    ],
+    "requires_personal_data": false,
+    "metadata": {}
+  },
+  {
+    "query_id": "3adfd7d8-53f3-4f7c-b9d0-273d5eab9d5e",
+    "question": "What are the pending action items for my Franksville hives from the most recent inspections?",
+    "ground_truth_intent": "personal",
+    "generation_strategy": "sql_schema",
+    "expected_sources": [
+      "personal_data"
+    ],
+    "ground_truth_chunks": [],
+    "ground_truth_documents": [],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "280acc51-5059-4130-8818-b974f7bf6d1f",
+    "question": "When was the last time I saw the queen in Hive Hillcrest 2, and what did I note about the brood pattern then?",
+    "ground_truth_intent": "personal",
+    "generation_strategy": "sql_schema",
+    "expected_sources": [
+      "personal_data"
+    ],
+    "ground_truth_chunks": [],
+    "ground_truth_documents": [],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "16471337-eecf-46ae-bde8-01ca833aa54c",
+    "question": "Which of my hives have had capped brood visible in the last three inspections?",
+    "ground_truth_intent": "personal",
+    "generation_strategy": "sql_schema",
+    "expected_sources": [
+      "personal_data"
+    ],
+    "ground_truth_chunks": [],
+    "ground_truth_documents": [],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "fcc3b0a0-b195-42c0-8719-1df6450d94c7",
+    "question": "What was the average temperature recorded during my inspections of the Springfield apiary over the past month?",
+    "ground_truth_intent": "personal",
+    "generation_strategy": "sql_schema",
+    "expected_sources": [
+      "personal_data"
+    ],
+    "ground_truth_chunks": [],
+    "ground_truth_documents": [],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "5734c1be-0d70-4669-a7de-e38a4019fe0d",
+    "question": "Did I record any eggs visible in Hive Oakwood during the inspection on the most recent rainy day?",
+    "ground_truth_intent": "personal",
+    "generation_strategy": "sql_schema",
+    "expected_sources": [
+      "personal_data"
+    ],
+    "ground_truth_chunks": [],
+    "ground_truth_documents": [],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "a323fcaa-6fba-41f0-90c4-f3d11e5fc77d",
+    "question": "What action items did I set for my hives after the inspection where the weather was windy and the activity level was low?",
+    "ground_truth_intent": "personal",
+    "generation_strategy": "sql_schema",
+    "expected_sources": [
+      "personal_data"
+    ],
+    "ground_truth_chunks": [],
+    "ground_truth_documents": [],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "bf8aeecc-4f3a-4832-be1e-6294faf76a6f",
+    "question": "How many of my hives have a laying pattern marked as irregular in the past season?",
+    "ground_truth_intent": "personal",
+    "generation_strategy": "sql_schema",
+    "expected_sources": [
+      "personal_data"
+    ],
+    "ground_truth_chunks": [],
+    "ground_truth_documents": [],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "3c92f500-ee58-43df-ba65-f189085b70a7",
+    "question": "What were the notes I took for my newest hive, nickname 'Sunflower', during its first inspection?",
+    "ground_truth_intent": "personal",
+    "generation_strategy": "sql_schema",
+    "expected_sources": [
+      "personal_data"
+    ],
+    "ground_truth_chunks": [],
+    "ground_truth_documents": [],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "ded839d4-a310-483e-b32c-04aa044c6e0a",
+    "question": "Which of my hives have had larvae visible but no capped brood in the last two inspections?",
+    "ground_truth_intent": "personal",
+    "generation_strategy": "sql_schema",
+    "expected_sources": [
+      "personal_data"
+    ],
+    "ground_truth_chunks": [],
+    "ground_truth_documents": [],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "c72b9ce5-b06d-4a83-b3e8-33e04d4e1886",
+    "question": "When is the next inspection due for my hives based on the intervals I usually schedule after the last recorded inspection dates?",
+    "ground_truth_intent": "personal",
+    "generation_strategy": "sql_schema",
+    "expected_sources": [
+      "personal_data"
+    ],
+    "ground_truth_chunks": [],
+    "ground_truth_documents": [],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "ca6c7996-fa09-4e9e-81c5-90dc296ba359",
+    "question": "Based on my latest varroa mite inspection results, what treatment method should I use and when is the optimal time to apply it?",
+    "ground_truth_intent": "combined",
+    "generation_strategy": "combined_nshot",
+    "expected_sources": [
+      "personal_data",
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-333.pdf#chunk_0"
+    ],
+    "ground_truth_documents": [
+      "ENTO-333.pdf"
+    ],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "0cab2345-b389-4fc1-89c6-8b5f2490dbee",
+    "question": "Based on my recent inspection records that show small dark beetles in one of my hives, what adult beetle characteristics should I look for to confirm they are small hive beetles, and what control methods are recommended?",
+    "ground_truth_intent": "combined",
+    "generation_strategy": "combined_nshot",
+    "expected_sources": [
+      "personal_data",
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-338.pdf#chunk_2"
+    ],
+    "ground_truth_documents": [
+      "ENTO-338.pdf"
+    ],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "84518b85-e75f-4c7b-83c2-18e598b12842",
+    "question": "Based on my recent inspections that show my hive is getting crowded, what can I do—such as using entrance reducers, hive decorations, or temporarily caging the queen—to reduce drift and help control Varroa mites?",
+    "ground_truth_intent": "combined",
+    "generation_strategy": "combined_nshot",
+    "expected_sources": [
+      "personal_data",
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-333.pdf#chunk_4"
+    ],
+    "ground_truth_documents": [
+      "ENTO-333.pdf"
+    ],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "d71495be-cb5f-48f4-a47d-a282b449b7dd",
+    "question": "Based on my latest hive inspections, have I detected any small hive beetle activity, and what control measures should I implement given their spread across the US?",
+    "ground_truth_intent": "combined",
+    "generation_strategy": "combined_nshot",
+    "expected_sources": [
+      "personal_data",
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-338.pdf#chunk_0"
+    ],
+    "ground_truth_documents": [
+      "ENTO-338.pdf"
+    ],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "1fbaf0a4-d7d6-4f33-ac26-2241e89c0f69",
+    "question": "Can you look up my latest sticky board results for Hive 2 and tell me if the board is positioned correctly under the screened bottom board and whether the mite count indicates I should treat?",
+    "ground_truth_intent": "combined",
+    "generation_strategy": "combined_nshot",
+    "expected_sources": [
+      "personal_data",
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-332.pdf#chunk_3"
+    ],
+    "ground_truth_documents": [
+      "ENTO-332.pdf"
+    ],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "922ab873-3825-49ec-be81-697211572664",
+    "question": "Based on my recent temperature readings that have been around 42 °F and my inspection notes showing few bees flying in and out of Hive 3, should I start feeding it sugar water, and what feeding ratio should I use?",
+    "ground_truth_intent": "combined",
+    "generation_strategy": "combined_nshot",
+    "expected_sources": [
+      "personal_data",
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "Beekeeping%20Year%20-%20tabloid%20size25ENG.pdf#chunk_2"
+    ],
+    "ground_truth_documents": [
+      "Beekeeping%20Year%20-%20tabloid%20size25ENG.pdf"
+    ],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "680983e4-e08b-43b6-9146-528ceb19b274",
+    "question": "Based on my recent sticky board sampling results, how can I apply the grid subsampling method to estimate the mite population in my hives?",
+    "ground_truth_intent": "combined",
+    "generation_strategy": "combined_nshot",
+    "expected_sources": [
+      "personal_data",
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-332.pdf#chunk_4"
+    ],
+    "ground_truth_documents": [
+      "ENTO-332.pdf"
+    ],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "2fb4bcae-729b-4b3a-84bf-1a9a43eb77ce",
+    "question": "Based on my recent inspection data for Hive #5, which varroa mite sampling method should I use to assess the infestation level?",
+    "ground_truth_intent": "combined",
+    "generation_strategy": "combined_nshot",
+    "expected_sources": [
+      "personal_data",
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-332.pdf#chunk_0"
+    ],
+    "ground_truth_documents": [
+      "ENTO-332.pdf"
+    ],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "363b1152-30ba-49e4-8c9d-d91b57c1a607",
+    "question": "Based on my recent mite count results, should I treat all of my hives now, and which cultural control practices should I use to keep mite levels low?",
+    "ground_truth_intent": "combined",
+    "generation_strategy": "combined_nshot",
+    "expected_sources": [
+      "personal_data",
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "ENTO-333.pdf#chunk_3"
+    ],
+    "ground_truth_documents": [
+      "ENTO-333.pdf"
+    ],
+    "requires_personal_data": true,
+    "metadata": {}
+  },
+  {
+    "query_id": "f3ffc276-5c01-483c-bd1e-69ef3b46f4a4",
+    "question": "Based on my recent food store levels and weight trends for my hives, when is the latest I should start feeding a 2:1 sugar‑water syrup to ensure it’s completed before the third week of October?",
+    "ground_truth_intent": "combined",
+    "generation_strategy": "combined_nshot",
+    "expected_sources": [
+      "personal_data",
+      "documents"
+    ],
+    "ground_truth_chunks": [
+      "fall-management.pdf#chunk_4"
+    ],
+    "ground_truth_documents": [
+      "fall-management.pdf"
+    ],
+    "requires_personal_data": true,
+    "metadata": {}
+  }
+]

@@ -1,0 +1,561 @@
+{
+  "llm_classifier": {
+    "strategy": "llm_classifier",
+    "query_count": 501,
+    "intent_metrics": {
+      "classification_report": {
+        "personal_only": {
+          "precision": 0.431266846361186,
+          "recall": 0.9580838323353293,
+          "f1-score": 0.5947955390334573,
+          "support": 167.0
+        },
+        "documents_only": {
+          "precision": 0.7692307692307693,
+          "recall": 0.11976047904191617,
+          "f1-score": 0.20725388601036268,
+          "support": 167.0
+        },
+        "both_combined": {
+          "precision": 0.9134615384615384,
+          "recall": 0.5688622754491018,
+          "f1-score": 0.7011070110701108,
+          "support": 167.0
+        },
+        "accuracy": 0.5489021956087824,
+        "macro avg": {
+          "precision": 0.7046530513511646,
+          "recall": 0.5489021956087825,
+          "f1-score": 0.5010521453713103,
+          "support": 501.0
+        },
+        "weighted avg": {
+          "precision": 0.7046530513511645,
+          "recall": 0.5489021956087824,
+          "f1-score": 0.5010521453713102,
+          "support": 501.0
+        }
+      },
+      "roc_auc": {
+        "personal_only": 0.7253755961131629,
+        "documents_only": 0.3443830901072107,
+        "both_combined": 0.9413747355588225
+      }
+    },
+    "retrieval_metrics": {
+      "retrieval_hit_rate@3": 0.059880239520958084,
+      "retrieval_hit_rate@5": 0.06287425149700598,
+      "retrieval_hit_rate@10": 0.06287425149700598
+    },
+    "latency_metrics": {
+      "p50_ms": 7499.2761629400775,
+      "p90_ms": 23933.369735023007,
+      "p95_ms": 26858.461532974616,
+      "p99_ms": 61274.48038198054,
+      "mean_ms": 11437.579076556152,
+      "min_ms": 2996.434318018146,
+      "max_ms": 83314.77088900283
+    },
+    "ragas_metrics": {
+      "context_relevance": {
+        "mean": 0.36342592592592593,
+        "num_evaluated": 108
+      },
+      "response_groundedness": {
+        "mean": 0.6482035928143712,
+        "num_evaluated": 501
+      }
+    },
+    "token_metrics": {
+      "by_model": {
+        "openai/gpt-oss-120b": {
+          "input": 1055059,
+          "output": 411019,
+          "total": 1466078
+        },
+        "openai/gpt-4o": {
+          "input": 32370,
+          "output": 1107,
+          "total": 33477
+        },
+        "anthropic/claude-haiku-4.5": {
+          "input": 1028659,
+          "output": 72179,
+          "total": 1100838
+        }
+      },
+      "total_input_tokens": 2116088,
+      "total_output_tokens": 484305,
+      "total_tokens": 2600393
+    },
+    "classification_tool_usage": null
+  },
+  "always_both": {
+    "strategy": "always_both",
+    "query_count": 501,
+    "intent_metrics": {
+      "classification_report": {
+        "personal_only": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 167.0
+        },
+        "documents_only": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 167.0
+        },
+        "both_combined": {
+          "precision": 0.3333333333333333,
+          "recall": 1.0,
+          "f1-score": 0.5,
+          "support": 167.0
+        },
+        "accuracy": 0.3333333333333333,
+        "macro avg": {
+          "precision": 0.1111111111111111,
+          "recall": 0.3333333333333333,
+          "f1-score": 0.16666666666666666,
+          "support": 501.0
+        },
+        "weighted avg": {
+          "precision": 0.1111111111111111,
+          "recall": 0.3333333333333333,
+          "f1-score": 0.16666666666666666,
+          "support": 501.0
+        }
+      },
+      "roc_auc": null
+    },
+    "retrieval_metrics": {
+      "retrieval_hit_rate@3": 0.16467065868263472,
+      "retrieval_hit_rate@5": 0.19461077844311378,
+      "retrieval_hit_rate@10": 0.19461077844311378
+    },
+    "latency_metrics": {
+      "p50_ms": 19669.539664988406,
+      "p90_ms": 32325.050336075947,
+      "p95_ms": 43678.784225019626,
+      "p99_ms": 81202.4574369425,
+      "mean_ms": 22642.75925444994,
+      "min_ms": 9421.362401917577,
+      "max_ms": 96194.00966505054
+    },
+    "ragas_metrics": {
+      "context_relevance": {
+        "mean": 0.3878424657534247,
+        "num_evaluated": 292
+      },
+      "response_groundedness": {
+        "mean": 0.5833333333333334,
+        "num_evaluated": 501
+      }
+    },
+    "token_metrics": {
+      "by_model": {
+        "openai/gpt-oss-120b": {
+          "input": 1398220,
+          "output": 388397,
+          "total": 1786617
+        },
+        "anthropic/claude-haiku-4.5": {
+          "input": 1240862,
+          "output": 80842,
+          "total": 1321704
+        }
+      },
+      "total_input_tokens": 2639082,
+      "total_output_tokens": 469239,
+      "total_tokens": 3108321
+    },
+    "classification_tool_usage": null
+  },
+  "agent_discretion": {
+    "strategy": "agent_discretion",
+    "query_count": 501,
+    "intent_metrics": {
+      "classification_report": {},
+      "roc_auc": null
+    },
+    "retrieval_metrics": {
+      "retrieval_hit_rate@3": 0.08682634730538923,
+      "retrieval_hit_rate@5": 0.11077844311377245,
+      "retrieval_hit_rate@10": 0.12874251497005987
+    },
+    "latency_metrics": {
+      "p50_ms": 12296.321003930643,
+      "p90_ms": 29906.18992492091,
+      "p95_ms": 37923.87850605883,
+      "p99_ms": 55255.96919993404,
+      "mean_ms": 15853.224968772378,
+      "min_ms": 1699.9831889988855,
+      "max_ms": 98755.9052510187
+    },
+    "ragas_metrics": {
+      "context_relevance": {
+        "mean": 0.5877192982456141,
+        "num_evaluated": 114
+      },
+      "response_groundedness": {
+        "mean": 0.10578842315369262,
+        "num_evaluated": 501
+      }
+    },
+    "token_metrics": {
+      "by_model": {
+        "openai/gpt-oss-120b": {
+          "input": 5381134,
+          "output": 844274,
+          "total": 6225408
+        },
+        "anthropic/claude-haiku-4.5": {
+          "input": 955200,
+          "output": 23590,
+          "total": 978790
+        }
+      },
+      "total_input_tokens": 6336334,
+      "total_output_tokens": 867864,
+      "total_tokens": 7204198
+    },
+    "classification_tool_usage": null
+  },
+  "heuristic_classifier": {
+    "strategy": "heuristic_classifier",
+    "query_count": 501,
+    "intent_metrics": {
+      "classification_report": {
+        "personal_only": {
+          "precision": 0.6894736842105263,
+          "recall": 0.7844311377245509,
+          "f1-score": 0.7338935574229691,
+          "support": 167.0
+        },
+        "documents_only": {
+          "precision": 0.9767441860465116,
+          "recall": 0.7544910179640718,
+          "f1-score": 0.8513513513513513,
+          "support": 167.0
+        },
+        "both_combined": {
+          "precision": 0.5989010989010989,
+          "recall": 0.6526946107784432,
+          "f1-score": 0.6246418338108882,
+          "support": 167.0
+        },
+        "accuracy": 0.7305389221556886,
+        "macro avg": {
+          "precision": 0.7550396563860456,
+          "recall": 0.7305389221556887,
+          "f1-score": 0.7366289141950696,
+          "support": 501.0
+        },
+        "weighted avg": {
+          "precision": 0.7550396563860456,
+          "recall": 0.7305389221556886,
+          "f1-score": 0.7366289141950695,
+          "support": 501.0
+        }
+      },
+      "roc_auc": null
+    },
+    "retrieval_metrics": {
+      "retrieval_hit_rate@3": 0.12275449101796407,
+      "retrieval_hit_rate@5": 0.1407185628742515,
+      "retrieval_hit_rate@10": 0.1407185628742515
+    },
+    "latency_metrics": {
+      "p50_ms": 15480.33598694019,
+      "p90_ms": 22886.896795942448,
+      "p95_ms": 26643.222608952783,
+      "p99_ms": 48414.19950698037,
+      "mean_ms": 13933.115150948415,
+      "min_ms": 1337.7114509930834,
+      "max_ms": 100196.07893098146
+    },
+    "ragas_metrics": {
+      "context_relevance": {
+        "mean": 0.4166666666666667,
+        "num_evaluated": 201
+      },
+      "response_groundedness": {
+        "mean": 0.5244510978043913,
+        "num_evaluated": 501
+      }
+    },
+    "token_metrics": {
+      "by_model": {
+        "openai/gpt-oss-120b": {
+          "input": 1049763,
+          "output": 377891,
+          "total": 1427654
+        },
+        "anthropic/claude-haiku-4.5": {
+          "input": 989035,
+          "output": 68366,
+          "total": 1057401
+        }
+      },
+      "total_input_tokens": 2038798,
+      "total_output_tokens": 446257,
+      "total_tokens": 2485055
+    },
+    "classification_tool_usage": null
+  },
+  "agent_with_intent_tool": {
+    "strategy": "agent_with_intent_tool",
+    "query_count": 501,
+    "intent_metrics": {
+      "classification_report": {
+        "personal_only": {
+          "precision": 0.1,
+          "recall": 1.0,
+          "f1-score": 0.18181818181818182,
+          "support": 2.0
+        },
+        "documents_only": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        },
+        "both_combined": {
+          "precision": 1.0,
+          "recall": 0.6842105263157895,
+          "f1-score": 0.8125,
+          "support": 57.0
+        },
+        "accuracy": 0.6833333333333333,
+        "macro avg": {
+          "precision": 0.3666666666666667,
+          "recall": 0.5614035087719298,
+          "f1-score": 0.331439393939394,
+          "support": 60.0
+        },
+        "weighted avg": {
+          "precision": 0.9533333333333334,
+          "recall": 0.6833333333333333,
+          "f1-score": 0.7779356060606061,
+          "support": 60.0
+        }
+      },
+      "roc_auc": null
+    },
+    "retrieval_metrics": {
+      "retrieval_hit_rate@3": 0.1437125748502994,
+      "retrieval_hit_rate@5": 0.15868263473053892,
+      "retrieval_hit_rate@10": 0.16766467065868262
+    },
+    "latency_metrics": {
+      "p50_ms": 26780.715535976924,
+      "p90_ms": 44459.07714799978,
+      "p95_ms": 55083.724302006885,
+      "p99_ms": 77141.01125008892,
+      "mean_ms": 28737.362964287477,
+      "min_ms": 2066.6499909712,
+      "max_ms": 323830.626264913
+    },
+    "ragas_metrics": {
+      "context_relevance": {
+        "mean": 0.7226890756302521,
+        "num_evaluated": 119
+      },
+      "response_groundedness": {
+        "mean": 0.14171656686626746,
+        "num_evaluated": 501
+      }
+    },
+    "token_metrics": {
+      "by_model": {
+        "openai/gpt-oss-120b": {
+          "input": 16450790,
+          "output": 1836153,
+          "total": 18286943
+        },
+        "anthropic/claude-haiku-4.5": {
+          "input": 1040275,
+          "output": 28849,
+          "total": 1069124
+        }
+      },
+      "total_input_tokens": 17491065,
+      "total_output_tokens": 1865002,
+      "total_tokens": 19356067
+    },
+    "classification_tool_usage": {
+      "count": 60,
+      "total": 501,
+      "percentage": 11.976047904191617
+    }
+  },
+  "supervised_classifier": {
+    "strategy": "supervised_classifier",
+    "query_count": 501,
+    "intent_metrics": {
+      "classification_report": {
+        "personal_only": {
+          "precision": 0.9698795180722891,
+          "recall": 0.9640718562874252,
+          "f1-score": 0.9669669669669669,
+          "support": 167.0
+        },
+        "documents_only": {
+          "precision": 0.9709302325581395,
+          "recall": 1.0,
+          "f1-score": 0.9852507374631269,
+          "support": 167.0
+        },
+        "both_combined": {
+          "precision": 0.9938650306748467,
+          "recall": 0.9700598802395209,
+          "f1-score": 0.9818181818181818,
+          "support": 167.0
+        },
+        "accuracy": 0.9780439121756487,
+        "macro avg": {
+          "precision": 0.9782249271017585,
+          "recall": 0.9780439121756487,
+          "f1-score": 0.9780119620827586,
+          "support": 501.0
+        },
+        "weighted avg": {
+          "precision": 0.9782249271017585,
+          "recall": 0.9780439121756487,
+          "f1-score": 0.9780119620827585,
+          "support": 501.0
+        }
+      },
+      "roc_auc": null
+    },
+    "retrieval_metrics": {
+      "retrieval_hit_rate@3": 0.16167664670658682,
+      "retrieval_hit_rate@5": 0.19461077844311378,
+      "retrieval_hit_rate@10": 0.19461077844311378
+    },
+    "latency_metrics": {
+      "p50_ms": 18763.546589994803,
+      "p90_ms": 30848.50165701937,
+      "p95_ms": 33310.44863408897,
+      "p99_ms": 40766.80377009325,
+      "mean_ms": 16606.819731375053,
+      "min_ms": 1352.6857709512115,
+      "max_ms": 48761.28117600456
+    },
+    "ragas_metrics": {
+      "context_relevance": {
+        "mean": 0.4723404255319149,
+        "num_evaluated": 235
+      },
+      "response_groundedness": {
+        "mean": 0.5134730538922155,
+        "num_evaluated": 501
+      }
+    },
+    "token_metrics": {
+      "by_model": {
+        "openai/gpt-oss-120b": {
+          "input": 1037166,
+          "output": 376361,
+          "total": 1413527
+        },
+        "anthropic/claude-haiku-4.5": {
+          "input": 1042294,
+          "output": 71526,
+          "total": 1113820
+        }
+      },
+      "total_input_tokens": 2079460,
+      "total_output_tokens": 447887,
+      "total_tokens": 2527347
+    },
+    "classification_tool_usage": null
+  },
+  "embedding_router": {
+    "strategy": "embedding_router",
+    "query_count": 501,
+    "intent_metrics": {
+      "classification_report": {
+        "personal_only": {
+          "precision": 0.9940476190476191,
+          "recall": 1.0,
+          "f1-score": 0.9970149253731343,
+          "support": 167.0
+        },
+        "documents_only": {
+          "precision": 0.9186991869918699,
+          "recall": 0.6766467065868264,
+          "f1-score": 0.7793103448275862,
+          "support": 167.0
+        },
+        "both_combined": {
+          "precision": 0.7428571428571429,
+          "recall": 0.9341317365269461,
+          "f1-score": 0.8275862068965517,
+          "support": 167.0
+        },
+        "accuracy": 0.8702594810379242,
+        "macro avg": {
+          "precision": 0.8852013162988772,
+          "recall": 0.870259481037924,
+          "f1-score": 0.8679704923657573,
+          "support": 501.0
+        },
+        "weighted avg": {
+          "precision": 0.8852013162988773,
+          "recall": 0.8702594810379242,
+          "f1-score": 0.8679704923657574,
+          "support": 501.0
+        }
+      },
+      "roc_auc": {
+        "personal_only": 1.0,
+        "documents_only": 0.9715837785506831,
+        "both_combined": 0.904801176090932
+      }
+    },
+    "retrieval_metrics": {
+      "retrieval_hit_rate@3": 0.12275449101796407,
+      "retrieval_hit_rate@5": 0.1467065868263473,
+      "retrieval_hit_rate@10": 0.1467065868263473
+    },
+    "latency_metrics": {
+      "p50_ms": 18482.407641946338,
+      "p90_ms": 29908.83451094851,
+      "p95_ms": 35621.43074499909,
+      "p99_ms": 49065.66614191979,
+      "mean_ms": 17005.118951934317,
+      "min_ms": 1435.7300410047174,
+      "max_ms": 59430.212512030266
+    },
+    "ragas_metrics": {
+      "context_relevance": {
+        "mean": 0.38977272727272727,
+        "num_evaluated": 220
+      },
+      "response_groundedness": {
+        "mean": 0.5109780439121756,
+        "num_evaluated": 501
+      }
+    },
+    "token_metrics": {
+      "by_model": {
+        "openai/gpt-oss-120b": {
+          "input": 1102830,
+          "output": 364861,
+          "total": 1467691
+        },
+        "anthropic/claude-haiku-4.5": {
+          "input": 1029980,
+          "output": 70731,
+          "total": 1100711
+        }
+      },
+      "total_input_tokens": 2132810,
+      "total_output_tokens": 435592,
+      "total_tokens": 2568402
+    },
+    "classification_tool_usage": null
+  }
+}

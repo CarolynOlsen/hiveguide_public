@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CI Smoke Test</title>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    // Simple smoke test: verify app renders without crashing
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const root = document.getElementById('root');
+        if (root && root.children.length > 0) {
+          console.log('✓ App rendered successfully');
+          process.exit(0);
+        } else {
+          console.error('✗ App failed to render');
+          process.exit(1);
+        }
+      }, 2000);
+    });
+  </script>
+</body>
+</html>

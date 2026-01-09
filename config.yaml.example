@@ -1,0 +1,27 @@
+# HiveGuide Configuration Template
+# Copy this file to config.yaml and fill in your actual values
+# NEVER commit config.yaml to git - it's in .gitignore
+
+# Database connection string
+# For local development with SQLite:
+# database_url: "sqlite:///./test.db"
+# For PostgreSQL (production):
+# database_url: "postgresql://username:password@host:port/database"
+database_url: "sqlite:///./test.db"
+
+# OpenAI API key for Whisper transcription and GPT analysis
+# Get your key from: https://platform.openai.com/api-keys
+openai_api_key: "your-openai-api-key-here"
+
+# OpenRouter API key (alternative AI provider)
+# Get your key from: https://openrouter.ai/keys
+openrouter_api_key: "your-openrouter-api-key-here"
+
+# Apple Developer credentials (for iOS TestFlight deployment)
+# Create an app-specific password at: https://appleid.apple.com/account/manage
+# IMPORTANT: Use an app-specific password, NOT your regular Apple ID password
+apple_id: "your-apple-id@example.com"
+apple_app_password: "your-app-specific-password-here"
+
+# AssemblyAI API key (for transcription - optional alternative to OpenAI Whisper)
+assembly_ai_api_key: "your-assemblyai-api-key-here"

@@ -1,0 +1,467 @@
+\documentclass[twocolumn,10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\title{Comparative Evaluation of Intent Routing Strategies for Multi-Source RAG}
+
+\author{
+Carolyn Olsen\\
+Independent Researcher\\
+}
+
+\date{January 2026}
+
+\begin{document}
+
+\twocolumn[
+\begin{@twocolumnfalse}
+\maketitle
+\begin{abstract}
+Multi-source retrieval-augmented generation systems must solve a fundamental routing problem: given a query, which data source(s) should be queried---structured databases, unstructured document corpora, or both? While recent work has proposed sophisticated multi-source architectures and model selection strategies, systematic evaluation of source selection mechanisms remains limited. This paper presents a comparative evaluation of seven routing strategies for heterogeneous RAG systems, including LLM-based classification, heuristic keyword matching, embedding similarity routing, supervised learning, agent-based approaches, and an always-both baseline. We evaluate these strategies in a beekeeping advisory system where queries require routing between personal inspections data and authoritative beekeeping documents, using 501 validation queries across three intent categories. We measure retrieval accuracy, response quality, latency, cost, and error rates. Our findings reveal that different strategies excel for different deployment priorities: heuristic classifiers achieve lowest latency and cost with decent accuracy; supervised classifiers achieve highest classification accuracy (97.8\%); while LLM classifiers provide a solid balance of context relevance and response groundedness, with lower latency than supervised approaches. The beekeeping domain provides a testbed where source credibility and routing accuracy directly impact answer quality. This work provides evidence-based guidance for source selection design in heterogeneous RAG systems, addressing a gap where architectural innovations are proposed without systematic comparison of routing mechanisms.
+\end{abstract}
+\vspace{1em}
+\end{@twocolumnfalse}
+]
+
+\section{Introduction}
+
+Retrieval-augmented generation (RAG) systems increasingly operate over heterogeneous data sources: structured databases (SQL) and unstructured document corpora (vector search). A beekeeping advisory system answering ``Is my hive's weight normal for September?’’ must route the query to both personal data (the user's specific hive weights) and general knowledge (typical weight ranges for the season). The fundamental challenge is \textbf{source selection}: determining which retrieval backend(s) to query and in what combination.
+
+This source selection problem is distinct from two related routing problems in recent literature: \textbf{model selection} (which LLM to use for generation) and \textbf{adaptive retrieval} (whether to retrieve at all). While RouteLLM and Hybrid LLM systematically compare routing strategies for model selection, and Adaptive-RAG and Self-RAG address when retrieval is necessary, the question of \emph{which data source(s) to query} in multi-source RAG systems lacks systematic evaluation. Recent multi-source architectures like HM-RAG and HydraRAG propose sophisticated coordination mechanisms but do not compare alternative routing approaches (LLM-based classification vs. heuristics vs. embedding similarity vs. supervised learning vs. agent-based selection).
+
+This paper addresses this gap through a domain-specific case study in beekeeping advisory. Beekeeping is well-suited for this evaluation because source credibility matters (requiring authoritative extension documents rather than general web search) and routing accuracy directly impacts answer quality. We compare seven routing strategies on a beekeeping RAG system (HiveGuide) with validation queries:
+
+\begin{enumerate}
+\item \textbf{LLM Classifier}: Pre-classifies queries using GPT-4o with few-shot prompting, then routes to specialized tools (SQL vs. vector search)
+\item \textbf{Heuristic Classifier}: Rule-based keyword matching (e.g., ``my'', ``I'', ``which of my'' $\rightarrow$ personal; ``what are'', ``how to'' $\rightarrow$ general)
+\item \textbf{Embedding Similarity Router}: k-NN classification using cosine similarity between query embeddings and labeled example queries (similar to RouteLLM)
+\item \textbf{Supervised Classifier}: LightGBM model trained on labeled query examples, using TF-IDF features
+\item \textbf{Agent Discretion}: ReAct-style agent that dynamically decides which tools to use without pre-classification
+\item \textbf{Agent with Intent Tool}: Agent that can call an intent classification tool when uncertain, combining reactive and proactive routing
+\item \textbf{Always-Both Baseline}: Always queries both sources, no classification overhead
+\end{enumerate}
+
+Our evaluation measures four dimensions: retrieval accuracy (Hit@3, Hit@5), response quality via RAGAS metrics (context relevance, groundedness), latency distributions (p90, p95), and cost (token usage, USD).
+
+\textbf{Contribution}: This work provides a systematic comparison of source selection mechanisms for multi-source RAG systems, evaluating classification approaches (LLM-based, heuristic, embedding-based, supervised, agent-based) across retrieval accuracy, response quality, latency, and cost. We identify which strategies excel for specific deployment priorities: heuristic classifiers minimize latency and cost, supervised classifiers maximize accuracy, and LLM classifiers balance quality metrics. These findings provide actionable guidance for practitioners deploying heterogeneous RAG systems where source credibility and routing accuracy are critical.
+
+\section{Related Work}
+
+Retrieval-augmented generation systems increasingly operate over heterogeneous data sources---structured databases (SQL), unstructured document corpora (vector search), knowledge graphs, and web retrieval. This source selection problem is distinct from model selection (which LLM to use) and adaptive retrieval (whether to retrieve). While recent work has advanced multi-source RAG architectures and adaptive retrieval strategies, systematic evaluation of source selection mechanisms remains limited. This section reviews relevant work across five areas: multi-source architectures, query routing and intent classification, agentic RAG approaches, evaluation frameworks, and cost-efficiency considerations.
+
+\subsection{Multi-Source RAG Architectures}
+
+Recent architectures coordinate retrieval across heterogeneous data modalities through hierarchical multi-agent systems. \textbf{HM-RAG}~\cite{hmrag} combines structured, unstructured, and graph-based sources via a three-tiered design: decomposition agents break complex queries into sub-tasks, modality-specific retrievers operate in parallel, and decision agents synthesize results through consistency voting. The system achieves 12.95\% improvement over vector-based baselines on ScienceQA. \textbf{HydraRAG}~\cite{hydrarag} unifies graph topology, document semantics, and source reliability through an agentic source selector that analyzes queries for time sensitivity and reasoning complexity before routing. Cross-source verification addresses reliability concerns, with HydraRAG outperforming hybrid baselines by 20.3\% average across seven benchmarks. \textbf{RAS}~\cite{ras} dynamically constructs query-specific knowledge graphs through iterative retrieval and structuring, demonstrating advantages for multi-step reasoning tasks.
+
+These architectures focus on \emph{how to coordinate} heterogeneous retrievers rather than \emph{how to select among them}. HM-RAG and HydraRAG employ LLM-based agents for source selection but do not compare alternative routing mechanisms (heuristics, supervised classifiers, different agent designs). Our work evaluates source selection strategies systematically, treating architecture as a controlled variable.
+
+\subsection{Query Routing and Intent Classification}
+
+Query routing determines which retrieval strategy to invoke. Most routing research addresses \emph{model selection} (which LLM to use) rather than \emph{source selection} (which retrieval backend to query). \textbf{RouteLLM}~\cite{routellm} trains routers from Chatbot Arena preference data to route between strong (GPT-4) and weak (Mixtral-8x7B) models, achieving 95\% of GPT-4 performance with only 14--26\% GPT-4 calls through matrix factorization-based routing. The paper compares four router architectures (similarity-weighted ranking, matrix factorization, BERT classifier, finetuned LLM) and introduces cost-quality trade-off metrics. \textbf{Hybrid LLM}~\cite{hybridllm} designs quality-aware routers using BERT-based classifiers with uncertainty modeling for edge-cloud deployment, achieving 40\% fewer large model calls with no quality degradation.
+
+While these works systematically compare routing strategies, they address \emph{model selection} rather than \emph{source selection}. \textbf{RAGRouter}~\cite{ragrouter} is the first work exploring LLM routing in the RAG setting, routing queries to multiple retrieval-augmented LLMs using contrastive learning with document embeddings and RAG capability embeddings. Our work applies systematic routing comparison to the multi-source setting where queries must be classified as requiring structured data, unstructured documents, or both.
+
+Work on \emph{adaptive retrieval}---deciding whether to retrieve---provides related insights. \textbf{Adaptive-RAG}~\cite{adaptiverag} uses a T5-large classifier to route among no retrieval, single-step RAG, or iterative multi-step RAG based on query complexity. \textbf{Self-RAG}~\cite{selfrag} trains reflection tokens that predict retrieval necessity, demonstrating that standard RAG can hurt performance when retrieval is unnecessary. These works address \emph{when to retrieve} rather than \emph{which source to query}, but their finding that universal retrieval strategies underperform adaptive approaches motivates our comparison against the always-both baseline.
+
+\subsection{Agentic RAG and Tool-Using Agents}
+
+Agent-based approaches treat retrieval as dynamic tool selection. The \textbf{ReAct framework}~\cite{react} established the Thought-Action-Observation loop enabling LLMs to interleave reasoning with tool use. \textbf{CRAG} (Corrective RAG)~\cite{crag} introduces a lightweight retrieval evaluator (T5-large) triggering corrective actions: refine documents if correct, trigger web search if incorrect, or combine both if ambiguous. This three-action routing anticipates our heuristic and supervised classification strategies. \textbf{AutoTool}~\cite{autotool} addresses dynamic tool selection through dual-phase optimization (SFT + RL), achieving 6.4\% gains in math/science reasoning over baseline training methods while also demonstrating strong generalization to unseen tool sets.
+
+The recent \textbf{Agentic RAG Survey}~\cite{agenticragsurvey} taxonomizes designs across router-based architectures and behavioral patterns including reflection, planning, and tool use. However, this literature focuses on \emph{agent design patterns} rather than systematic comparison of routing mechanisms. Our ``agent discretion'' and ``agent with intent tool'' strategies represent two points in the agentic design space, evaluated against non-agentic alternatives.
+
+\subsection{RAG Evaluation Frameworks}
+
+Evaluation methodology has advanced significantly, though latency and cost remain underrepresented. \textbf{RAGAS}~\cite{ragas} established reference-free evaluation using LLM-based judges for context precision, context recall, faithfulness, and answer relevancy. \textbf{ARES}~\cite{ares} improves on RAGAS through fine-tuned lightweight judges rather than generic prompts, outperforming RAGAS by up to 59.3 percentage points on context relevance. \textbf{VERA}~\cite{vera} introduces cross-encoder mechanisms with bootstrap statistics for confidence bounds.
+
+Recent work addresses efficiency evaluation alongside quality metrics. Gan et al.~\cite{ragsurvey} dedicate substantial coverage to efficiency evaluation including latency metrics. \textbf{eRAG}~\cite{erag} addresses efficiency through individual document evaluation requiring 50$\times$ less GPU memory than end-to-end evaluation. \textbf{RAGBench}~\cite{ragbench} provides explainable evaluation across industry domains, finding that fine-tuned DeBERTa outperforms LLM-based evaluation on RAG assessment tasks.
+
+Our work employs RAGAS metrics for quality evaluation while adding explicit latency (p90, p95) and cost (token usage, USD) metrics, enabling multi-dimensional trade-off analysis.
+
+\subsection{Positioning and Contribution}
+
+This work addresses a specific gap: \textbf{systematic evaluation of source selection mechanisms for multi-source RAG systems}. While RouteLLM compares routing strategies for model selection and HM-RAG proposes architectures for multi-source coordination, no prior work systematically evaluates classification approaches (LLM-based, heuristic, supervised, agent-based) for determining which retrieval backend(s) to query when combining structured and unstructured sources. Our contribution is methodological---comparing six routing strategies across retrieval accuracy, response quality, latency, and cost---providing evidence-based guidance for source selection design in heterogeneous RAG systems. We evaluate these strategies in a beekeeping domain where authoritative sources are essential and routing decisions directly affect answer quality.
+
+\section{Strategy Descriptions}
+
+All classification-based strategies (LLM, Heuristic, Embedding Similarity Router, Supervised) share the same routing logic and response generation: queries are classified into three categories (personal\_only, documents\_only, both\_combined), then routed to SQL (personal), vector search (documents), or both in parallel (combined). Response generation uses gpt-oss-120b with structured prompts containing retrieved context labeled by source type. The strategies differ only in their classification method.
+
+\subsection{LLM Classifier Strategy}
+
+\textbf{Classification Method}: GPT-4o via OpenRouter with few-shot prompting and logprobs for confidence scores. Logprobs are only used for evaluation, not currently used in routing. Logprobs are not available in gpt-oss-120b responses from OpenRouter, leading us to select the GPT model instead.
+
+\textbf{Advantages}: Semantic understanding of query intent, confidence scores for uncertainty handling.
+
+\textbf{Disadvantages}: Higher latency (classification step), higher cost (GPT-4o calls), LLM dependency.
+
+\subsection{Heuristic Classifier Strategy}
+
+\textbf{Classification Method}: Rule-based keyword matching: Personal indicators: ``my'', ``I'', ``which of my'', ``my hives'', hive names; General indicators: ``what are'', ``how to'', ``signs of'', disease/pest names; Default: both\_combined if ambiguous.
+
+\textbf{Advantages}: Zero classification latency, zero classification cost, no external dependencies.
+
+\textbf{Disadvantages}: Brittle to phrasing variations, no semantic understanding, may misclassify ambiguous queries.
+
+\subsection{Embedding Similarity Router Strategy}
+
+\textbf{Classification Method}: k-Nearest Neighbors (k-NN) classification using cosine similarity between query embeddings and labeled example queries. Uses OpenAI text-embedding-3-large (3072-dim) to embed queries and compute similarity to pre-embedded examples from each intent category.
+
+\textbf{Index Creation}: One-time setup using 80\% of training data: Sample example queries from each intent category; Embed examples using text-embedding-3-large; Store embeddings in routing index.
+
+\textbf{Routing Logic}: At query time: (1) Embed incoming query; (2) Compute cosine similarity to all example embeddings; (3) For each category, average similarity of top-k most similar examples; (4) Route to category with highest average similarity. Hyperparameter k tuned on 20\% holdout set.
+
+\textbf{Advantages}: Semantic understanding without LLM or training overhead, fast inference ($\sim$embedding time only), no model to train or maintain, tunable via k parameter and example selection.
+
+\textbf{Disadvantages}: Requires labeled example queries (but no training), embedding API dependency, performance depends on example quality and coverage, may not capture complex reasoning patterns.
+
+\subsection{Supervised Classifier Strategy}
+
+\textbf{Classification Method}: LightGBM gradient boosting model trained on labeled query examples. Features: TF-IDF vectorization of query text. Classes: personal, general, combined.
+
+\textbf{Advantages}: Fast inference ($<$1ms), low cost (local model), can improve with more training data.
+
+\textbf{Disadvantages}: Requires labeled training data, may not generalize to new query patterns, model maintenance overhead.
+
+\subsection{Agent Discretion Strategy}
+
+\textbf{Classification Method}: None - agent decides dynamically.
+
+\textbf{Routing Logic}: ReAct-style agent with access to both tools (user data SQL, document search). Agent reasons about which tools to call based on question text, with max 10 iterations and early-stopping instructions.
+
+\textbf{Response Generation}: Agent framework (LangChain) orchestrates tool calls and final response.
+
+\textbf{Advantages}: Flexible, can handle complex multi-step reasoning, no pre-classification overhead.
+
+\textbf{Disadvantages}: Higher latency (multiple tool calls), higher cost (agent reasoning steps), may make redundant tool calls.
+
+\subsection{Agent with Intent Tool Strategy}
+
+\textbf{Classification Method}: Agent can call a classify\_user\_intent tool when uncertain.
+
+\textbf{Routing Logic}: Hybrid approach - agent starts with question, can proactively call intent classification tool if needed, then uses appropriate tools.
+
+\textbf{Response Generation}: Agent framework with intent tool available.
+
+\textbf{Advantages}: Combines flexibility of agent with explicit intent awareness, can skip classification when confident.
+
+\textbf{Disadvantages}: Still incurs agent overhead, classification cost only when needed but adds complexity.
+
+\subsection{Always-Both Baseline}
+
+\textbf{Classification Method}: None - always routes to both.
+
+\textbf{Routing Logic}: Always executes both tools (SQL + vector search) in parallel, regardless of query content.
+
+\textbf{Response Generation}: Simple LLM with both contexts provided.
+
+\textbf{Advantages}: Simple, no classification errors, always has all information.
+
+\textbf{Disadvantages}: Unnecessary retrieval for single-source queries, higher latency and cost, may confuse LLM with irrelevant context.
+
+\section{Evaluation Methodology}
+
+\subsection{Dataset}
+
+\textbf{Domain}: Beekeeping advisory system (HiveGuide)
+
+\textbf{Personal Data}: Test account with 4 hives and $\sim$30 inspection records, including: Hive metadata (location, nickname); Timestamped observations (brood counts, weights, queen status); Structured data extracted from voice transcriptions.
+
+The personal data was generated to reflect realistic beekeeping patterns, with inspections distributed over $\sim$8 months to enable queries about recent inspections, historical patterns, and seasonal comparisons. Inspection records include realistic details such as weather conditions, queen observations, brood patterns, disease signs, and action items.
+
+\textbf{Document Corpus}: 8 authoritative beekeeping sources (Virginia Tech, USDA, state extension services), chunked at 600 tokens with 100-token overlap, indexed with pgvector. Sources all use licenses that allow using their content (e.g. Creative Commons).
+
+\textbf{Validation Queries}: 501 queries across three intent categories (167 per category): Personal-only: 167 queries requiring only user's personal hive data; Documents-only: 167 queries requiring only authoritative beekeeping knowledge; Combined: 167 queries requiring both personal data and authoritative sources.
+
+\textbf{Example Queries by Intent Category}:
+
+\emph{Personal-only queries} require accessing the user's inspection records, hive metadata, or historical observations: ``Which of my hives are underweight?''; ``What were my action items from last month?''; ``When did I last see the queen in Home 1?''; ``Which hives have I treated for varroa this year?''; ``What was my brood pattern like for Bee Club 1 on my last inspection?''
+
+\emph{Documents-only queries} require authoritative beekeeping knowledge from extension services and guidelines: ``What are signs of varroa mites?''; ``How do I treat American foulbrood?''; ``What is the ideal hive weight for winter?''; ``When should I add supers in spring?''; ``What are the symptoms of nosema disease?''
+
+\emph{Combined queries} require both personal data and authoritative knowledge for comparative analysis: ``Is my hive's weight normal for April?''; ``Based on my recent inspections, when should I plan to harvest honey?''; ``Are my hives showing signs of varroa based on my inspection notes?''; ``Is my queen's laying pattern normal for this time of year?''; ``Should I be concerned about my hive's weight given it's October?''
+
+\textbf{Query Generation Methodology}: Questions were generated using LLM-based synthesis (gpt-oss-120b): documents\_only queries from PDF chunks, personal\_only queries from SQL schema, and both\_combined queries using few-shot examples. All queries were validated for intent category match and annotated with ground truth (expected chunks, sources, and SQL queries).
+
+\textbf{Ground Truth}: Each query annotated with: Expected intent category; Expected sources (which documents/hives should be retrieved); Expected chunks (specific document chunks that should appear in top-k).
+
+\subsection{Metrics}
+
+\textbf{Retrieval Accuracy}: Hit@3: Fraction of queries where at least one ground-truth chunk appears in top-3 retrieved chunks; Hit@5: Fraction of queries where at least one ground-truth chunk appears in top-5 retrieved chunks.
+
+\textbf{Response Quality} (RAGAS metrics): Context Relevance: How relevant are retrieved chunks to the query? (0--1, higher is better); Response Groundedness: How well is the response supported by retrieved context? (0--1, higher is better).
+
+\textbf{Latency}: p90: 90th percentile end-to-end latency (query $\rightarrow$ response); p95: 95th percentile end-to-end latency; Note that latency includes retries, for example if there is a response parsing error.
+
+\textbf{Cost}: Total input tokens (across all models); Total output tokens (across all models); Total cost (USD) based on model pricing: GPT-4o: \$2.50/\$10.00 per million tokens (input/output); gpt-oss-120b: \$0.02/\$0.10 per million tokens (input/output); Claude Haiku 4.5: \$1.00/\$5.00 per million tokens (input/output).
+
+\subsection{Experimental Setup}
+
+\textbf{Infrastructure}: Backend: FastAPI (Python 3.11); Database: PostgreSQL 15 + pgvector; Embeddings: OpenAI text-embedding-3-large (3072-dim); LLM APIs: OpenRouter.
+
+\textbf{Evaluation Protocol}: All strategies evaluated on same query set; Queries processed in parallel (4 workers) with rate limiting; Results saved incrementally for resume capability; RAGAS metrics computed post-hoc for all results.
+
+\textbf{Model Selection}: All strategies use the same response generation model (gpt-oss-120b via OpenRouter) to ensure fair comparison. We selected gpt-oss-120b for its favorable quality-to-cost trade-off: it provides high-quality responses comparable to proprietary models while maintaining significantly lower cost (\$0.02/\$0.10 per million tokens input/output) and reasonable latency.
+
+\textbf{Reproducibility}: Fixed random seed (42) for query sampling; All strategies use same response generation model (gpt-oss-120b); Same validation layer applied to all strategies.
+
+\section{Results}
+
+We evaluate seven routing strategies across 501 validation queries, measuring retrieval accuracy, response quality, latency, and cost.
+
+\subsection{Retrieval Accuracy}
+
+\begin{table}[h]
+\centering
+\caption{Retrieval Hit Rates (\%)}
+\small
+\begin{tabular}{lrr}
+\toprule
+Strategy & Hit@3 & Hit@5 \\
+\midrule
+Always-Both & \textbf{16.5} & \textbf{19.5} \\
+Heuristic & 12.3 & 14.1 \\
+LLM & 6.0 & 6.3 \\
+Supervised & 16.2 & \textbf{19.5} \\
+Agent Discretion & 8.7 & 11.1 \\
+Agent + Intent & 14.4 & 15.9 \\
+Embedding Sim. & 12.3 & 14.7 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Note}: All strategies evaluated on 501 queries except Agent Discretion (227 successful) and Agent + Intent (377 successful) due to error rates.
+
+\textbf{Classification-Based Strategies}: The supervised classifier achieved the highest hit rates among classification strategies (19.5\% Hit@5), matching the always-both baseline. This validates that near-perfect classification accuracy (97.8\%, see Table 5) enabled comprehensive retrieval coverage while avoiding unnecessary queries. The embedding similarity router and heuristic classifier achieved similar moderate performance (14.7\% and 14.1\% Hit@5), demonstrating that semantic routing via embeddings provided comparable retrieval precision to keyword-based rules. Surprisingly, the LLM classifier achieved the lowest hit rates across all strategies (6.3\% Hit@5) despite its semantic understanding capabilities---its poor classification accuracy (54.9\%, particularly 11.9\% recall on documents\_only queries) caused it to miss relevant document chunks entirely.
+
+\textbf{Agent-Based Strategies}: Agent with intent tool showed moderate performance (15.9\% Hit@5), comparable to classification-based strategies, while agent discretion showed lower hit rates (11.1\% Hit@5). However, these results must be interpreted cautiously given the high error rates in agent strategies (see Section 5.6), as these metrics reflect only successful queries.
+
+\textbf{Baseline}: The always-both baseline achieved the highest hit rates overall (19.5\% Hit@5), tied with supervised classifier, by consistently retrieving from both sources. This set the upper bound for retrieval coverage but came at the cost of efficiency (higher latency and cost, see Sections 5.3--5.4).
+
+\subsection{Response Quality}
+
+\begin{table}[h]
+\centering
+\caption{RAGAS Quality Metrics (0--1, higher better)}
+\small
+\begin{tabular}{lrr}
+\toprule
+Strategy & Context Rel. & Ground. \\
+\midrule
+Always-Both & 0.388 & 0.583 \\
+Heuristic & 0.417 & 0.524 \\
+LLM & 0.363 & \textbf{0.648} \\
+Supervised & 0.472 & 0.513 \\
+Agent Discretion & 0.588 & 0.106 \\
+Agent + Intent & \textbf{0.723} & 0.142 \\
+Embedding Sim. & 0.390 & 0.511 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Critical Finding - Agent Quality Trade-off}: Agent-based strategies showed a striking pattern: highest context relevance (0.723 for agent with intent tool, 0.588 for agent discretion) but lowest response groundedness (0.142 and 0.106). This reveals a fundamental trade-off---agents excelled at selecting relevant context through dynamic reasoning but generated responses poorly grounded in that context. The pattern suggests agent reasoning produced responses not directly supported by retrieved chunks, likely due to LLM reasoning patterns that synthesize beyond the provided context. \textbf{Note}: This trade-off might be addressable through architectural improvements such as adding a specialized response formulation tool that constrains generation to retrieved context, separating the reasoning (tool selection) phase from the response drafting phase.
+
+\textbf{Classification-Based Strategy Performance}: Supervised classifier achieved best balance (0.472 context relevance, 0.513 groundedness) among classification strategies, demonstrating that high classification accuracy enabled both relevant retrieval and well-grounded responses. LLM classifier showed inverse pattern to agents: lowest context relevance (0.363) but highest response groundedness (0.648) across all strategies. Despite missing relevant context due to poor classification, its responses were exceptionally well-supported by what it did retrieve. Embedding similarity router showed moderate quality (0.390 context relevance, 0.511 groundedness), comparable to heuristic classifier (0.417, 0.524), validating that semantic routing provided quality improvements without LLM overhead. Heuristic classifier performed competitively despite simple keyword matching, achieving balanced metrics that rivaled more sophisticated approaches.
+
+\textbf{Baseline Performance}: Always-both showed reasonable groundedness (0.583, second only to LLM classifier) but lower context relevance (0.388), suggesting that retrieving everything provided supporting evidence but introduced irrelevant context that diluted relevance scores.
+
+\subsection{Latency Performance}
+
+\begin{table}[h]
+\centering
+\caption{Latency Percentiles (seconds)}
+\small
+\begin{tabular}{lrr}
+\toprule
+Strategy & p90 & p95 \\
+\midrule
+Always-Both & 32.3 & 43.7 \\
+Heuristic & \textbf{22.9} & \textbf{26.6} \\
+LLM & 23.9 & 26.9 \\
+Supervised & 30.8 & 33.3 \\
+Agent Discretion & 29.9 & 37.9 \\
+Agent + Intent & 44.5 & 55.1 \\
+Embedding Sim. & 29.9 & 35.6 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Component Breakdown} (estimated from observed patterns): Response generation dominates latency for all strategies; Classification overhead varies by approach (heuristic: near-zero, supervised: minimal, embedding: API call, LLM: API call with inference); Tool execution time depends on query complexity and data source; Agent strategies incur additional overhead from reasoning steps and tool calls.
+
+\textbf{Classification Strategy Latency Patterns}: Heuristic classifier achieved lowest latency (22.9s p90, 26.6s p95) through zero-overhead classification, while LLM classifier showed surprisingly competitive latency (23.9s p90) despite GPT-4o classification overhead---the classification step added only $\sim$1s compared to heuristic routing. Embedding similarity router showed moderate latency (29.9s p90), falling between simple classifiers and more complex approaches, while supervised classifier showed slightly higher latency (30.8s p90) than expected for local inference, potentially due to variance in tool execution rather than classification overhead.
+
+\textbf{Agent Strategy Latency Overhead}: Agent with intent tool showed the highest latency across all strategies (44.5s p90, 55.1s p95), reflecting overhead from agent reasoning loops, multiple tool calls, and optional classification steps. The high p95 (55.1s) indicated significant tail latency from complex reasoning paths. Agent discretion showed more moderate latency (29.9s p90) but high variance (37.9s p95) due to variable reasoning complexity.
+
+\textbf{Baseline Latency}: Always-both showed higher latency (32.3s p90) than targeted classification strategies, reflecting the cost of parallel retrieval from both sources even when only one was needed.
+
+\subsection{Cost Analysis}
+
+\begin{table}[h]
+\centering
+\caption{Token Usage and Cost}
+\footnotesize
+\begin{tabular}{lrrr}
+\toprule
+Strategy & Input & Output & Cost \\
+ & Tokens & Tokens & (USD) \\
+\midrule
+Always-Both & 2,639,082 & 469,239 & \$1.71 \\
+Heuristic & 2,038,798 & 446,257 & \textbf{\$1.39} \\
+LLM & 2,116,088 & 484,305 & \$1.54 \\
+Supervised & 2,079,460 & 447,887 & \$1.46 \\
+Agent Discretion & 6,336,334 & 867,864 & \$1.27 \\
+Agent + Intent & 17,491,065 & 1,865,002 & \$1.70 \\
+Embedding Sim. & 2,132,810 & 435,592 & \$1.44 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Cost Breakdown by Model} (for 501 queries): \textbf{GPT-4o} (LLM Classifier only): 33,477 tokens, \$0.09; \textbf{gpt-oss-120b} (generation): 1.4M--18.3M tokens, \$0.06--\$0.51 depending on strategy; \textbf{Claude Haiku 4.5} (RAGAS evaluation): $\sim$1.0--1.2M input tokens per strategy, \$1.33--\$1.65; \textbf{text-embedding-3-large} (Embedding Similarity Router): Included in input tokens, minimal cost ($\sim$\$0.000005 per query).
+
+\textbf{RAGAS Evaluation Dominates Cost}: RAGAS evaluation represented 80--95\% of total cost (\$1.33--\$1.65 per strategy), dwarfing classification and generation costs. Sampling-based quality monitoring (e.g., evaluating 1--10\% of queries) could reduce evaluation costs by 10--100$\times$ while maintaining sufficient quality signal.
+
+\textbf{Classification Strategy Costs}: Among classification approaches, heuristic classifier achieved lowest cost (\$1.39) through zero-cost classification, while embedding similarity router showed comparable cost (\$1.44) despite semantic routing, validating that embedding-based approaches provided sophistication without significant cost penalty. LLM classifier showed moderate cost (\$1.54), with GPT-4o classification adding only \$0.09 (6\% of total cost)---classification overhead was relatively small compared to evaluation. Supervised classifier fell in the middle (\$1.46).
+
+\textbf{Agent Strategy Cost Patterns}: Agent discretion achieved lowest total cost (\$1.27) despite massive token usage (6.3M input tokens), because the 54.3\% error rate reduced the number of queries requiring RAGAS evaluation. However, this ``cost savings'' came from query failures rather than efficiency. Agent with intent tool showed highest cost (\$1.70) due to extensive token usage (17.5M input tokens) from multiple reasoning steps, approaching always-both baseline costs.
+
+\textbf{Baseline Cost}: Always-both showed highest cost (\$1.71), reflecting unnecessary retrieval operations and RAGAS evaluation overhead on comprehensive context.
+
+\subsection{Intent Classification Accuracy}
+
+\begin{table}[h]
+\centering
+\caption{Classification Performance}
+\footnotesize
+\begin{tabular}{lrrrr}
+\toprule
+Strategy & Acc. & Prec. & Rec. & F1 \\
+\midrule
+Heuristic & 73.1\% & 75.5\% & 73.1\% & 73.7\% \\
+LLM & 54.9\% & 70.5\% & 54.9\% & 50.1\% \\
+Supervised & \textbf{97.8\%} & \textbf{97.8\%} & \textbf{97.8\%} & \textbf{97.8\%} \\
+Embedding Sim. & 87.0\% & 88.5\% & 87.0\% & 86.8\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Per-Class Performance}: \textbf{Supervised Classifier}: Excellent across all classes (F1: 96.7\% personal, 98.5\% documents, 98.2\% combined); \textbf{Embedding Similarity Router}: Strong performance (F1: 99.7\% personal, 77.9\% documents, 82.8\% combined), with perfect recall on personal queries (100\%); \textbf{Heuristic Classifier}: Good performance (F1: 73.4\% personal, 85.1\% documents, 62.5\% combined), strongest on documents\_only queries; \textbf{LLM Classifier}: Poor overall (F1: 59.5\% personal, 20.7\% documents, 70.1\% combined), severely underperforms on documents\_only (11.9\% recall).
+
+\textbf{Classification Accuracy Hierarchy}: Supervised classifier achieved near-perfect classification (97.8\% accuracy), establishing the upper bound for learned approaches. Embedding similarity router achieved strong accuracy (87.0\%), falling between heuristic (73.1\%) and supervised approaches as predicted---it provided semantic understanding without training overhead. Heuristic classifier showed moderate accuracy (73.1\%), validating that keyword patterns captured substantial signal in beekeeping queries.
+
+\textbf{LLM Classifier Failure Mode}: The LLM classifier showed surprisingly poor accuracy (54.9\%) despite semantic understanding capabilities, severely underperforming on documents\_only queries (11.9\% recall, 76.9\% precision). It frequently misclassified general knowledge queries as combined or personal, explaining the low retrieval hit rates (6.3\% Hit@5) despite semantic capabilities. This suggested the few-shot prompting approach or example selection required refinement---the classifier appeared biased toward predicting personal or combined intents even when queries clearly requested general knowledge.
+
+\textbf{Per-Class Insights}: Embedding similarity router showed perfect recall on personal queries (100\%, F1: 99.7\%), suggesting embeddings captured personal query semantics exceptionally well (phrases like ``my hives'', ``my inspections''). However, documents\_only classification was weaker (67.7\% recall, F1: 77.9\%), potentially due to semantic similarity between general knowledge queries and combined queries. Heuristic classifier showed opposite pattern---strongest on documents\_only (97.7\% precision, 75.4\% recall, F1: 85.1\%), validating that keyword patterns like ``what are'', ``how to'' reliably identified general knowledge queries. Combined queries proved most challenging for heuristic (59.9\% precision, 65.3\% recall, F1: 62.5\%).
+
+\textbf{Accuracy-to-Performance Relationship}: Higher classification accuracy generally correlated with better retrieval hit rates (supervised: 19.5\%, embedding similarity router: 14.7\%, heuristic: 14.1\%, LLM: 6.3\%) and more balanced quality metrics. However, the relationship was not linear---embedding similarity router (87.0\% accuracy) achieved better context relevance (0.390) than LLM classifier (54.9\% accuracy, 0.363) despite lower classification accuracy, suggesting that classification errors in different categories had different downstream impacts.
+
+\subsection{Error Rates}
+
+\begin{table}[h]
+\centering
+\caption{Processing Error Rates}
+\footnotesize
+\begin{tabular}{lrrr}
+\toprule
+Strategy & Errors & Err.\% & Succ. \\
+\midrule
+Always-Both & \textbf{0} & \textbf{0.0} & 501 \\
+Heuristic & \textbf{0} & \textbf{0.0} & 501 \\
+LLM & \textbf{0} & \textbf{0.0} & 501 \\
+Supervised & \textbf{0} & \textbf{0.0} & 501 \\
+Agent Discretion & 272 & 54.3 & 227 \\
+Agent + Intent & 122 & 24.4 & 377 \\
+Embedding Sim. & \textbf{0} & \textbf{0.0} & 501 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Note}: All strategies attempted 501 queries. Error rates reflect queries that failed to return a response (e.g., max iterations reached). Agent strategies were configured with max\_iterations=10.
+
+All classification-based strategies achieved perfect reliability (0.0\% error rate), while agent strategies showed substantially higher error rates (54.3\% for agent discretion, 24.4\% for agent with intent tool) due to tool parsing failures and iteration budget exhaustion. Errors arose from two sources: multiple reasoning rounds consuming iteration budget, and failures to parse tool responses causing re-calls. Performance metrics in Tables 1--5 reflect only successful responses. Agent strategies require substantially more engineering effort to achieve production reliability (prompt engineering, response parsing, error handling, iteration tuning), while classification-based strategies achieved 0\% error rates with simpler implementations.
+
+\subsection{Cross-Strategy Comparison}
+
+\textbf{Key Trade-offs}: Classification accuracy strongly correlates with retrieval performance (supervised 97.8\% accuracy → 19.5\% Hit@5; LLM 54.9\% → 6.3\% Hit@5), though embedding router (87.0\% accuracy) achieves comparable quality to heuristic (73.1\%) without training overhead. Agent strategies achieve highest context relevance (0.723) but lowest groundedness (0.106--0.142) and require substantial engineering effort (24--54\% error rates). RAGAS evaluation costs (\$1.33--\$1.65) exceeded system costs (\$0.06--\$0.51) by 2--27$\times$, suggesting sampling-based quality monitoring for production deployments.
+
+\textbf{Strategy Grouping for Analysis}: \textbf{High-accuracy classifiers}: Supervised (97.8\%), Embedding Similarity Router (87.0\%); \textbf{Moderate-accuracy classifiers}: Heuristic (73.1\%), LLM (54.9\%); \textbf{Agent-based approaches}: Agent Discretion, Agent with Intent Tool; \textbf{Baseline}: Always-Both.
+
+\textbf{Strategy Selection by Deployment Priority}: No single strategy dominated across all metrics. Practitioners should select strategies based on deployment priorities:
+
+\textbf{Efficiency-critical applications}: Heuristic classifier minimizes latency and cost with acceptable accuracy, ideal when domain has clear keyword patterns.
+
+\textbf{Accuracy-critical applications}: Supervised classifier maximizes classification accuracy and retrieval hit rates when training data is available.
+
+\textbf{No-training-overhead applications}: Embedding similarity router provides semantic understanding without training, requiring only labeled examples.
+
+\textbf{Groundedness-critical applications}: LLM classifier achieves highest response groundedness, though poor classification accuracy limits applicability.
+
+\textbf{Complex reasoning applications}: Agent strategies achieve highest context relevance but require substantial engineering effort to address reliability issues (24--54\% error rates in current implementation).
+
+\textbf{Dominated Strategies}: Always-both baseline is dominated by supervised classifier (same retrieval hit rates, similar quality, but higher cost and latency). Agent strategies show promise for complex reasoning but need significant development investment before production deployment.
+
+\section{References}
+
+\begin{thebibliography}{99}
+
+\bibitem{hmrag}
+P. Liu, X. Liu, R. Yao, J. Liu, S. Meng, D. Wang, and J. Ma, ``HM-RAG: Hierarchical Multi-Agent Multimodal Retrieval Augmented Generation,'' in \emph{Proceedings of the 33rd ACM International Conference on Multimedia (MM '25)}, Dublin, Ireland, 2025. DOI: 10.1145/3746027.3754761. arXiv:2504.12330.
+
+\bibitem{hydrarag}
+X. Tan, X. Wang, Q. Liu, X. Xu, X. Yuan, L. Zhu, and W. Zhang, ``HydraRAG: Structured Cross-Source Enhanced Large Language Model Reasoning,'' in \emph{Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing (EMNLP 2025)}, Suzhou, China, pp. 14442--14470, 2025. DOI: 10.18653/v1/2025.emnlp-main.730. arXiv:2505.17464.
+
+\bibitem{ras}
+P. Jiang, L. Cao, R. Zhu, M. Jiang, Y. Zhang, J. Sun, and J. Han, ``RAS: Retrieval-And-Structuring for Knowledge-Intensive LLM Generation,'' \emph{arXiv preprint}, arXiv:2502.10996, 2025.
+
+\bibitem{routellm}
+I. Ong, A. Almahairi, V. Wu, W.-L. Chiang, T. Wu, J. E. Gonzalez, M. W. Kadous, and I. Stoica, ``RouteLLM: Learning to Route LLMs with Preference Data,'' in \emph{Proceedings of the Thirteenth International Conference on Learning Representations (ICLR 2025)}, 2025. arXiv:2406.18665.
+
+\bibitem{hybridllm}
+D. Ding, A. Mallick, C. Wang, R. Sim, S. Mukherjee, V. Ruhle, L. V. S. Lakshmanan, and A. H. Awadallah, ``Hybrid LLM: Cost-Efficient and Quality-Aware Query Routing,'' in \emph{Proceedings of the Twelfth International Conference on Learning Representations (ICLR 2024)}, 2024. arXiv:2404.14618.
+
+\bibitem{ragrouter}
+J. Zhang, X. Liu, Y. Hu, C. Niu, F. Wu, and G. Chen, ``RAGRouter: Learning to Route Queries to Multiple Retrieval-Augmented Language Models,'' in \emph{Advances in Neural Information Processing Systems 38 (NeurIPS 2025)}, 2025. arXiv:2505.23052.
+
+\bibitem{adaptiverag}
+S. Jeong, J. Baek, S. Cho, S. J. Hwang, and J. C. Park, ``Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity,'' in \emph{Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL 2024)}, Mexico City, Mexico, pp. 7036--7050, 2024. DOI: 10.18653/v1/2024.naacl-long.389.
+
+\bibitem{selfrag}
+A. Asai, Z. Wu, Y. Wang, A. Sil, and H. Hajishirzi, ``Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection,'' in \emph{Proceedings of the Twelfth International Conference on Learning Representations (ICLR 2024)}, 2024. arXiv:2310.11511.
+
+\bibitem{react}
+S. Yao, J. Zhao, D. Yu, N. Du, I. Shafran, K. Narasimhan, and Y. Cao, ``ReAct: Synergizing Reasoning and Acting in Language Models,'' in \emph{Proceedings of the Eleventh International Conference on Learning Representations (ICLR 2023)}, 2023. arXiv:2210.03629.
+
+\bibitem{crag}
+S.-Q. Yan, J.-C. Gu, Y. Zhu, and Z.-H. Ling, ``Corrective Retrieval Augmented Generation,'' \emph{arXiv preprint}, arXiv:2401.15884, 2024.
+
+\bibitem{autotool}
+J. Zou, L. Yang, Y. Qi, S. Chen, M. Ai, K. Shen, J. He, and M. Wang, ``AutoTool: Dynamic Tool Selection and Integration for Agentic Reasoning,'' \emph{arXiv preprint}, arXiv:2512.13278, 2025.
+
+\bibitem{agenticragsurvey}
+A. Singh, A. Ehtesham, S. Kumar, and T. Talaei Khoei, ``Agentic Retrieval-Augmented Generation: A Survey on Agentic RAG,'' \emph{arXiv preprint}, arXiv:2501.09136, 2025.
+
+\bibitem{ragas}
+S. Es, J. James, L. Espinosa Anke, and S. Schockaert, ``RAGAS: Automated Evaluation of Retrieval Augmented Generation,'' in \emph{Proceedings of the 18th Conference of the European Chapter of the Association for Computational Linguistics: System Demonstrations (EACL 2024)}, St. Julians, Malta, pp. 150--158, 2024. DOI: 10.18653/v1/2024.eacl-demo.16. arXiv:2309.15217.
+
+\bibitem{ares}
+J. Saad-Falcon, O. Khattab, C. Potts, and M. Zaharia, ``ARES: An Automated Evaluation Framework for Retrieval-Augmented Generation Systems,'' in \emph{Proceedings of the 2024 Conference of the North American Chapter of the Association for Computational Linguistics (NAACL 2024)}, Mexico City, Mexico, pp. 338--354, 2024. DOI: 10.18653/v1/2024.naacl-long.20. arXiv:2311.09476.
+
+\bibitem{vera}
+T. Ding, A. Banerjee, L. Mombaerts, Y. Li, T. Borogovac, and J. P. De la Cruz Weinstein, ``VERA: Validation and Evaluation of Retrieval-Augmented Systems,'' \emph{arXiv preprint}, arXiv:2409.03759, 2024.
+
+\bibitem{ragsurvey}
+A. Gan, H. Yu, K. Zhang, Q. Liu, W. Yan, Z. Huang, S. Tong, and G. Hu, ``Retrieval Augmented Generation Evaluation in the Era of Large Language Models: A Comprehensive Survey,'' \emph{arXiv preprint}, arXiv:2504.14891, 2025.
+
+\bibitem{erag}
+A. Salemi and H. Zamani, ``Evaluating Retrieval Quality in Retrieval-Augmented Generation,'' in \emph{Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR 2024)}, Washington, DC, USA, pp. 2395--2400, 2024. DOI: 10.1145/3626772.3657957. arXiv:2404.13781. \emph{Best Short Paper Award.}
+
+\bibitem{ragbench}
+R. Friel, M. Belyi, and A. Sanyal, ``RAGBench: Explainable Benchmark for Retrieval-Augmented Generation Systems,'' \emph{arXiv preprint}, arXiv:2407.11005, 2024.
+
+\end{thebibliography}
+
+\end{document}

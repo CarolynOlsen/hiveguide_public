@@ -1,0 +1,26 @@
+% Auto-generated comparison table from metrics_summary.json
+% DO NOT EDIT MANUALLY - regenerate with: python generate_metrics_tex.py
+
+\begin{table}[h]
+\centering
+\footnotesize
+\begin{tabular}{l@{\hspace{0.1cm}}r@{\hspace{0.08cm}}r@{\hspace{0.08cm}}r}
+\hline
+\textbf{Metric} & \textbf{Intent-Aware} & \textbf{Always-Both} & \textbf{Agent-Disc} \\
+\hline
+\multicolumn{4}{l}{\textit{Latency (s, lower is better)}} \\
+p90 & 68.4 & 51.1$^{**}$ & \textbf{38.7}$^{**}$ \\
+p95 & 100.5 & 82.8$^{**}$ & \textbf{44.1}$^{**}$ \\
+\hline
+\multicolumn{4}{l}{\textit{Hit Rate (\%, higher is better)}} \\
+Hit@3 & 3.4 & 2.4 & \textbf{15.3} \\
+Hit@5 & 4.6 & 3.0 & \textbf{23.5} \\
+\hline
+\multicolumn{4}{l}{\textit{Quality (0-1, higher is better)}} \\
+Context Rel. & 0.467 & 0.475 & \textbf{0.485} \\
+Response Grd. & \textbf{0.518} & 0.491 & 0.450$^{**}$ \\
+\hline
+\end{tabular}
+\caption{System performance comparison across \querycountIntentaware{} validation queries. Bold values indicate best performance. Significance markers: $^*$ p$<$0.05, $^{{**}}$ p$<$0.01 (t-test comparing intent-aware to each baseline). Hit@5 uses a 0.5 similarity threshold filter.}
+\label{tab:results}
+\end{table}

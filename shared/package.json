@@ -1,0 +1,30 @@
+{
+  "name": "@hiveguide/shared",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types and API client for HiveGuide web and mobile",
+  "main": "index.ts",
+  "types": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./types": "./types.ts",
+    "./api-client": "./api-client.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "hivescribe",
+    "beekeeping",
+    "shared"
+  ],
+  "author": "HiveScribe Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.12.2",
+    "react": "19.1.0"
+  }
+}

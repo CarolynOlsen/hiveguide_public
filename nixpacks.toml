@@ -1,0 +1,18 @@
+[phases.setup]
+nixPkgs = ["python312", "nodejs-20_x"]
+
+[phases.install]
+cmds = [
+  "pip install -r backend/requirements.txt",
+  "cd web-rn && npm ci --legacy-peer-deps"
+]
+
+[phases.build]
+cmds = [
+  "cd web-rn && npm run build",
+  "mkdir -p backend/static",
+  "cp -r web-rn/dist/* backend/static/"
+]
+
+[start]
+cmd = "uvicorn backend.main:app --host 0.0.0.0 --port $PORT"

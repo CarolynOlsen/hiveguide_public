@@ -1,0 +1,45 @@
+
+
+platform :ios, '16.0'
+
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+
+target 'HiveGuideiOS' do
+  config = use_native_modules!
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :hermes_enabled => true,
+    :fabric_enabled => false,
+    :new_arch_enabled => false,
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  post_install do |installer|
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false
+    )
+    
+    # Set minimum iOS deployment target for all Pods
+    # This prevents warnings about Pods defaulting to iOS 9.0
+    minimum_ios_version = '16.0'
+    
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['RCT_NEW_ARCH_ENABLED'] = '0'
+        
+        # Set minimum iOS deployment target
+        if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < minimum_ios_version.to_f
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = minimum_ios_version
+        end
+        
+        # Ensure dSYMs are generated for all frameworks (including hermes)
+        if config.name == 'Release'
+          config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf-with-dsym'
+        end
+      end
+    end
+  end
+end
