@@ -132,6 +132,12 @@ rag/processed/
 backend/rag/processed/
 rag/sources/
 backend/rag/sources/
+validation/results/
+validation/models/*.pkl
+
+# Console logs and debug files
+mobile/iphone_console_logs.txt
+*.backup
 
 # Duplicate/test mobile directories
 web/mobile/
