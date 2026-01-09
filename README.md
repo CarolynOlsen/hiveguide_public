@@ -1,4 +1,4 @@
-# HiveGuide
+# HiveGuide, your AI assistant for efficient beekeeping
 
 A cross-platform beekeeping management application with voice transcription, AI analysis, and intelligent advisory. Available as a web app and native iOS app, both powered by a shared FastAPI backend.
 
@@ -7,6 +7,8 @@ After the original author's family developed severe bee allergies, this project 
 ## Platform Support
 
 This project started as a web app only. However, keeping your hands free during a beehive inspection is key: you're handling bees, may have gloves on, may have fingers covered in propolis. That made the transcription aspect especially important. With the web app, we aren't able to stream audio to the service for near-real-time transcription, meaning it all sends at once and then transcribes. That can cause issues for long inspections. Using a native iOS app, we can send audio in short chunks and provide near-real-time transcription, giving the user rapid feedback and reducing the risk of a failure to send one of those chunks (vs. the entire inspection). And thus the iOS app was born, and we migrated from React.js to React Native.
+
+The app has not yet been expanded to Android.
 
 - **Web App**: React Native Web (unified with iOS codebase)
 - **iOS App**: React Native app for iPhone and iPad  
