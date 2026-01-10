@@ -624,18 +624,18 @@ All endpoints are shared between web and iOS platforms.
 ## Known Issues & Roadmap
 
 ### Current Issues
-- **Photo Upload**: iOS supports multiple photos (up to 5), web needs implementation
-- **Circles**: Only available in web, needs iOS implementation
+- **Circles**: These were implemented in the React.js web version, and the backend still exist, but it's not available in the React Native app. This is functionality so that hives and inspections can be shared.
+- **Web App Navigation**: Some pages are missing the bottom navigation bar. Web only.
 
-### Roadmap
+### Potential Future Development
+
+Contributors could tackle these roadmap items:
 - Android app support
 - Web admin panel
 - Offline mode for mobile
 - Push notifications for action items
 - Hive analytics dashboard
-- Export inspection reports (PDF)
-- Integration with weather APIs
-- Seasonal reminders and tips
+- Export inspection reports
 
 ## Contributing & Cross-Platform Development
 
