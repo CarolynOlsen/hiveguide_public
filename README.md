@@ -64,29 +64,6 @@ The app has not yet been expanded to Android.
 
 See `mobile/AUDIO_TESTING_GUIDE.md` for setup instructions.
 
-## CI/CD & Quality Assurance
-
-[![CI Status](https://github.com/CarolynOlsen/hiveguide_public/actions/workflows/ci.yml/badge.svg)](https://github.com/CarolynOlsen/hiveguide_public/actions/workflows/ci.yml)
-
-Every pull request and push to `main` triggers comprehensive automated testing:
-
-- **Backend Tests** - Python API tests with PostgreSQL + pgvector
-- **React Native Web Build** - Webpack build, TypeScript check, Playwright smoke tests
-- **Mobile TypeScript** - Type checking and compilation validation
-- **iOS Build** - Native build validation on macOS runners (optional)
-- **Shared Code** - TypeScript validation for shared modules
-
-**Deployment:**
-- **Railway** auto-deploys React Native Web on merge to `main`
-- **TestFlight** deployment available (manual trigger)
-
-**Runtime Testing:**
-- Playwright smoke tests verify app renders correctly
-- Build artifacts validated automatically
-- Test reports uploaded for debugging
-
-See `.github/CICD_GUIDE.md` for complete CI/CD documentation.
-
 ## AI Assistant Architecture
 
 The HiveGuide AI Assistant uses an advanced RAG (Retrieval-Augmented Generation) system that intelligently combines your personal hive data with authoritative beekeeping knowledge to provide personalized advice.
@@ -692,7 +669,6 @@ When developing features that touch both web and iOS:
 
 - `mobile/README.md` - Mobile app development guide
 - `mobile/AUDIO_TESTING_GUIDE.md` - Audio/transcription testing
-- `.github/CICD_GUIDE.md` - CI/CD pipeline documentation
 - `backend/rag/README_SOURCES.md` - RAG document sources
 - `backend/scripts/README_TEST_DATA.md` - Test data generation
 - `publications/strategies_comparison.pdf` - RAG routing evaluation research
