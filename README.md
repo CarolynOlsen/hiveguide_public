@@ -624,6 +624,6 @@ When developing features that touch both web and iOS:
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+Creative Commons No Commercial - see [LICENSE](LICENSE) file for details.
 
 Copyright (c) 2026 Carolyn Olsen
