@@ -600,30 +600,6 @@ When developing features that touch both web and iOS:
 5. **Implement shared UI** in `mobile/src/screens/` (affects both platforms!)
 6. **Test both platforms** thoroughly
 
-### Best Practices
-
-**API Design:**
-- Keep API responses consistent and well-typed
-- Use TypeScript interfaces in `shared/types.ts`
-- Document breaking changes clearly
-- Version API if making incompatible changes
-
-**Shared Types:**
-- Define all data structures in `shared/types.ts`
-- Keep types platform-agnostic
-- Use TypeScript strict mode
-
-**Error Handling:**
-- Return consistent error formats from API
-- Handle errors gracefully on both platforms
-- Log errors with sufficient context
-
-**Testing Strategy:**
-- Backend: Unit tests for all endpoints
-- Web: Component tests for critical UI
-- iOS: Test on multiple iOS versions/devices
-- Integration: Test full flows on both platforms
-
 ### Common Pitfalls
 
 **Don't:**
