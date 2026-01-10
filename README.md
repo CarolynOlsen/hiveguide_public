@@ -156,61 +156,57 @@ flowchart TD
 
 This table shows which components are used by each platform, helping you understand the impact of changes:
 
-| Component | Web | iOS | Android (Future) | Description |
-|-----------|-----|-----|------------------|-------------|
+**Note:** The repository includes some scaffolded Android files in `mobile/android/`, but there is no functional Android app at this time.
+
+| Component | Web | iOS | Description |
+|-----------|-----|-----|-------------|
 | **Backend** |
-| `backend/main.py` | ✓ | ✓ | ✓ | FastAPI REST API - all endpoints |
-| `backend/rag/` | ✓ | ✓ | ✓ | AI Advisor/RAG system (via API) |
-| `backend/utils/llm_analyzer.py` | ✓ | ✓ | ✓ | Inspection analysis (via API) |
-| `backend/alembic/` | ✓ | ✓ | ✓ | Database migrations |
-| `backend/scripts/` | ✓ | ✓ | ✓ | Admin utilities (DB-level) |
-| `backend/tests/` | ✓ | ✓ | ✓ | API endpoint tests |
+| `backend/main.py` | ✓ | ✓ | FastAPI REST API - all endpoints |
+| `backend/rag/` | ✓ | ✓ | AI Advisor/RAG system (via API) |
+| `backend/utils/llm_analyzer.py` | ✓ | ✓ | Inspection analysis (via API) |
+| `backend/alembic/` | ✓ | ✓ | Database migrations |
+| `backend/scripts/` | ✓ | ✓ | Admin utilities (DB-level) |
+| `backend/tests/` | ✓ | ✓ | API endpoint tests |
 | **Frontend - React Native (Shared Screens & Logic)** |
-| `mobile/src/` | ✓ | ✓ | ✓ | **Shared React Native code (Web + iOS):** |
-| `├─ screens/` | ✓ | ✓ | ✓ | Screen components **shared by web and mobile** |
-| `├─ components/` | ✓ | ✓ | ✓ | Reusable UI components |
-| `├─ navigation/` | ✓ | ✓ | ✓ | Navigation configuration |
-| `├─ contexts/` | ✓ | ✓ | ✓ | React contexts for state management |
-| `├─ services/` | ✓ | ✓ | ✓ | API integration layer |
-| `├─ hooks/` | ✓ | ✓ | ✓ | Custom React hooks |
-| `mobile/ios/` | | ✓ | | **iOS-specific native code:** |
-| `├─ HiveGuideiOS.xcworkspace` | | ✓ | | Xcode workspace file |
-| `├─ HiveGuideiOS.xcodeproj/` | | ✓ | | Xcode project configuration |
-| `├─ HiveGuideiOS/` | | ✓ | | Native iOS source files |
-| `│  ├─ AppDelegate.mm` | | ✓ | | iOS app lifecycle |
-| `│  ├─ Info.plist` | | ✓ | | iOS app permissions & config |
-| `│  ├─ Images.xcassets` | | ✓ | | App icons & launch images |
-| `├─ Podfile` | | ✓ | | CocoaPods dependency management |
-| `├─ Pods/` | | ✓ | | iOS native dependencies |
-| `mobile/android/` | | | 🚧 | **Android (scaffolded, not active):** |
-| `├─ app/` | | | 🚧 | Android app module |
-| `├─ build.gradle` | | | 🚧 | Android build configuration |
-| `├─ AndroidManifest.xml` | | | 🚧 | Android permissions & config |
-| `mobile/package.json` | | ✓ | ✓ | React Native dependencies |
-| `mobile/metro.config.js` | | ✓ | ✓ | Metro bundler configuration |
-| `mobile/babel.config.js` | | ✓ | ✓ | Babel transpiler configuration |
-| `mobile/tsconfig.json` | | ✓ | ✓ | TypeScript configuration |
+| `mobile/src/` | ✓ | ✓ | **Shared React Native code (Web + iOS):** |
+| `├─ screens/` | ✓ | ✓ | Screen components **shared by web and mobile** |
+| `├─ components/` | ✓ | ✓ | Reusable UI components |
+| `├─ navigation/` | ✓ | ✓ | Navigation configuration |
+| `├─ contexts/` | ✓ | ✓ | React contexts for state management |
+| `├─ services/` | ✓ | ✓ | API integration layer |
+| `├─ hooks/` | ✓ | ✓ | Custom React hooks |
+| `mobile/ios/` | | ✓ | **iOS-specific native code:** |
+| `├─ HiveGuideiOS.xcworkspace` | | ✓ | Xcode workspace file |
+| `├─ HiveGuideiOS.xcodeproj/` | | ✓ | Xcode project configuration |
+| `├─ HiveGuideiOS/` | | ✓ | Native iOS source files |
+| `│  ├─ AppDelegate.mm` | | ✓ | iOS app lifecycle |
+| `│  ├─ Info.plist` | | ✓ | iOS app permissions & config |
+| `│  ├─ Images.xcassets` | | ✓ | App icons & launch images |
+| `├─ Podfile` | | ✓ | CocoaPods dependency management |
+| `├─ Pods/` | | ✓ | iOS native dependencies |
+| `mobile/package.json` | | ✓ | React Native dependencies |
+| `mobile/metro.config.js` | | ✓ | Metro bundler configuration |
+| `mobile/babel.config.js` | | ✓ | Babel transpiler configuration |
+| `mobile/tsconfig.json` | | ✓ | TypeScript configuration |
 | **Shared Code** |
-| `shared/types.ts` | ✓ | ✓ | ✓ | TypeScript type definitions |
-| `shared/api-client.ts` | ✓ | ✓ | ✓ | API client interface |
-| `shared/platform/` | ✓ | ✓ | ✓ | Platform adapters (storage, audio) |
-| `shared/components/` | ✓ | ✓ | ✓ | Platform-aware components (DatePicker, ImagePicker) |
-| `shared/theme/` | ✓ | ✓ | ✓ | Unified design system |
-| `config.yaml` | ✓ | | | Local dev config (gitignored) |
-| `alembic.ini` | ✓ | ✓ | ✓ | Database migration config |
-| `requirements.txt` | ✓ | ✓ | ✓ | Python backend dependencies |
+| `shared/types.ts` | ✓ | ✓ | TypeScript type definitions |
+| `shared/api-client.ts` | ✓ | ✓ | API client interface |
+| `shared/platform/` | ✓ | ✓ | Platform adapters (storage, audio) |
+| `shared/components/` | ✓ | ✓ | Platform-aware components (DatePicker, ImagePicker) |
+| `shared/theme/` | ✓ | ✓ | Unified design system |
+| `config.yaml` | ✓ | | Local dev config (gitignored) |
+| `alembic.ini` | ✓ | ✓ | Database migration config |
+| `requirements.txt` | ✓ | ✓ | Python backend dependencies |
 | **Deployment** |
-| `Procfile` | ✓ | ✓ | ✓ | Railway deployment config |
-| `Dockerfile` | ✓ | ✓ | ✓ | Docker container config |
-| `backend/scripts/launch_app.sh` | ✓ | | | Local web dev launcher (Mac) |
-| `backend/scripts/launch_app.bat` | ✓ | | | Local web dev launcher (Windows) |
+| `Procfile` | ✓ | ✓ | Railway deployment config |
+| `Dockerfile` | ✓ | ✓ | Docker container config |
+| `backend/scripts/launch_app.sh` | ✓ | | Local web dev launcher (Mac) |
+| `backend/scripts/launch_app.bat` | ✓ | | Local web dev launcher (Windows) |
 
 ### Understanding the Matrix
 
 **Platform Support Indicators:**
 - ✓ = Currently supported and actively used
-- ✓ (Web + iOS) = **Shared code** - changes affect both platforms
-- 🚧 = Scaffolded but not yet active (Android)
 - (empty) = Not applicable to this platform
 
 **Backend components:**
@@ -233,30 +229,12 @@ This table shows which components are used by each platform, helping you underst
 
 **Platform-specific native code:**
 - `mobile/ios/`: iOS-only (Xcode projects, CocoaPods, Swift/Objective-C bridges)
-- `mobile/android/`: Android-only (currently scaffolded for future development)
 - `web-rn/`: Web-specific build configuration (Webpack, entry point)
 - Changes here only affect the specific platform
 
 **Shared TypeScript code:**
 - Type definitions and API client used by all platforms
-- Changes require testing on web, iOS, and future Android
-
-### Development Impact Guide
-
-| Change Type | Affects Web | Affects iOS | Testing Needed |
-|-------------|-------------|-------------|----------------|
-| Add API endpoint | Yes | Yes | Both platforms |
-| Change API response format | Yes | Yes | Both platforms + integration tests |
-| Database schema change | Yes | Yes | Migrations + both platforms |
-| **Update screen in `mobile/src/screens/`** | **Yes** | **Yes** | **Both platforms (shared code!)** |
-| Update web-specific config (webpack) | Yes | No | Web build only |
-| Update iOS-specific config (Xcode) | No | Yes | iOS build only |
-| Update shared TypeScript types | Yes | Yes | Both platforms |
-| Update platform adapter (`shared/components/`) | Yes | Yes | Both platforms |
-| Backend bug fix (no API change) | No | No | Backend tests only |
-| Add Python dependency | Yes | Yes | Backend deployment |
-| Add web-rn npm dependency | Yes | No | Web build |
-| Add mobile npm dependency | Yes | Yes | **Both** (screens are shared!) |
+- Changes require testing on web and iOS
 
 ## Quick Start
 
@@ -461,7 +439,7 @@ hiveguide_public/
 │   ├── tsconfig.json          # TypeScript config
 │   └── package.json           # Web dependencies
 │
-├── mobile/                     # React Native app (iOS ✓ Android 🚧)
+├── mobile/                     # React Native app (iOS ✓)
 │   ├── src/                   # **SHARED WITH WEB** (via React Native Web)
 │   │   ├── screens/          # ✓ Shared screens (web + iOS)
 │   │   ├── components/       # ✓ Shared components
@@ -474,11 +452,11 @@ hiveguide_public/
 │   │   ├── HiveGuideiOS.xcworkspace
 │   │   ├── Podfile           # CocoaPods dependencies
 │   │   └── ...
-│   ├── android/               # Android (scaffolded, not active)
-│   ├── App.tsx               # Root component (iOS/Android)
+│   ├── android/               # Android starter files (not functional)
+│   ├── App.tsx               # Root component (iOS)
 │   └── package.json           # React Native dependencies
 │
-├── shared/                     # Shared code (Web ✓ iOS ✓ Android 🚧)
+├── shared/                     # Shared code (Web ✓ iOS ✓)
 │   ├── types.ts              # TypeScript type definitions
 │   ├── api-client.ts         # API client interface
 │   ├── platform/             # Platform adapters
