@@ -85,7 +85,7 @@ The LLM classifier approach was selected for HiveGuide because it provides stron
 
 ```mermaid
 flowchart TD
-    A["User Query<br/>'Is my hive at normal<br/>weight for October?'"] --> B[Intent Classifier<br/>GPT-4o]
+    A[User Query: Is my hive at normal weight for October?] --> B[Intent Classifier GPT-4o]
     
     B --> C{Question Type?}
     C -->|Personal Data| D[User Hive Data Tool]
@@ -93,12 +93,12 @@ flowchart TD
     C -->|Combined| F[Both Tools]
     
     D --> G[PostgreSQL Database]
-    G --> H["Personal Hive Data:<br/>• Inspection records<br/>• Weights & measurements<br/>• Queen status<br/>• Action items<br/>• Photos & notes"]
+    G --> H[Personal Hive Data: Inspection records, Weights, Queen status, Action items, Photos]
     
-    E --> I[Vector Database<br/>pgvector]
-    I --> J["Beekeeping Documents:<br/>• Extension guidelines<br/>• Best practices<br/>• Technical references<br/>• Disease/pest info"]
+    E --> I[Vector Database pgvector]
+    I --> J[Beekeeping Documents: Extension guidelines, Best practices, Technical references]
     
-    F --> K[LangChain Agent<br/>gpt-oss-120b]
+    F --> K[LangChain Agent gpt-oss-120b]
     H --> K
     J --> K
     
@@ -108,12 +108,7 @@ flowchart TD
     M -->|Yes| O[Strategic Response Generation]
     
     N --> K
-    O --> P["Final Answer with Sources<br/>'Your Franksville 4 hive at 74 lbs<br/>is below the 80-100 lb ideal<br/>for October (Source: VA Tech)'"]
-    
-    style A fill:#e1f5fe
-    style P fill:#e8f5e8
-    style K fill:#fff3e0
-    style L fill:#fce4ec
+    O --> P[Final Answer with Sources]
 ```
 
 ### How It Works
