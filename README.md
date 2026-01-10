@@ -10,6 +10,25 @@ The AI advisor uses a multi-source RAG architecture that routes queries between 
 
 **Beyond beekeeping:** While built for beekeeping, this architecture could be applied to any domain requiring field inspections that rely heavily on past data and niche domain knowledge -- agriculture, equipment maintenance, environmental monitoring, etc.
 
+## Demos
+
+These recordings are shown at 2x speed, for those of us with short attention spans.
+
+### Homepage and New Inspection
+
+Here you can see a new inspection with near-real-time transcription. When the user clicks "Analyze," the AI reviews their field notes and auto-populates selections for structured fields. 
+
+https://github.com/user-attachments/assets/13b0f68b-c19e-4221-bd21-0bfc1d7a3c28
+
+### AI Assistant Use
+
+This recording has been edited to reduce the time waiting for a response. The recording was made with the app using the `gpt-oss-120b` model via OpenRouter, for its balance of low cost with high quality -- but the latency is slow.
+
+https://github.com/user-attachments/assets/9a7c07f5-b7e5-44ad-bf7d-9a030a54bfb5
+
+
+At the end of the recording you can see that a clicked reference link takes the user to the specific relevant page in that source.
+
 ## Platform Support
 
 This project started as a web app only. However, keeping your hands free during a beehive inspection is key: you're handling bees, may have gloves on, may have fingers covered in propolis. That made the transcription aspect especially important. With the web app, we aren't able to stream audio to the service for near-real-time transcription, meaning it all sends at once and then transcribes. That can cause issues for long inspections. Using a native iOS app, we can send audio in short chunks and provide near-real-time transcription, giving the user rapid feedback and reducing the risk of a failure to send one of those chunks (vs. the entire inspection). And thus the iOS app was born, and we migrated from React.js to React Native.
