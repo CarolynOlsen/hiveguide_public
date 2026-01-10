@@ -1,8 +1,14 @@
-# HiveGuide, your AI assistant for efficient beekeeping
+# HiveGuide
 
 A cross-platform beekeeping management application with voice transcription, AI analysis, and intelligent advisory. Available as a web app and native iOS app, both powered by a shared FastAPI backend.
 
-After the original author's family developed severe bee allergies, this project transitioned from private to open source. The hope is that others in field-inspection-heavy domains can adapt the app for their use.
+After the original author's family developed severe bee allergies, this project transitioned from private to open source. The app has been used on a trial basis for several months to manage multiple hives and inspections, and was released to internal testers on TestFlight (iOS).
+
+**What makes this unique:** HiveGuide solves the practical challenges of field inspections -- your hands are full, covered in propolis, or wearing thick gloves, yet you need to capture detailed observations for later analysis. Voice transcription enables hands-free data entry, AI extraction structures that data automatically (identifying queen sightings, brood patterns, pest signs), and an intelligent advisor helps you apply domain-specific knowledge when you need it most.
+
+The AI advisor uses a multi-source RAG architecture that routes queries between personal inspection history and authoritative literature. The routing strategy was systematically evaluated against six alternatives and documented in `publications/strategies_comparison.pdf`.
+
+**Beyond beekeeping:** While built for beekeeping, this architecture could be applied to any domain requiring field inspections that rely heavily on past data and niche domain knowledge -- agriculture, equipment maintenance, environmental monitoring, etc.
 
 ## Platform Support
 
