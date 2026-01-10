@@ -1,6 +1,6 @@
 # HiveGuide
 
-A cross-platform beekeeping management application with voice transcription, AI analysis, and intelligent advisory. Available as a web app and native iOS app, both powered by a shared FastAPI backend.
+A cross-platform beekeeping management application with voice transcription, AI analysis, and intelligent advising. Available as a web app and native iOS app, both powered by a shared FastAPI backend.
 
 After the original author's family developed severe bee allergies, this project transitioned from private to open source. The app has been used on a trial basis for several months to manage multiple hives and inspections, and was released to internal testers on TestFlight (iOS).
 
