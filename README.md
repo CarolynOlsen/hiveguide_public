@@ -2,13 +2,15 @@
 
 A cross-platform beekeeping management application with voice transcription, AI analysis, and intelligent advising. Available as a web app and native iOS app, both powered by a shared FastAPI backend.
 
+> **Here from a non-beekeeping field?** This is a general pattern for hands-free field inspections — voice capture → structured records + action items → an assistant that reasons over your own data *and* a reference knowledge base. Jump to [Adapting to Other Domains](#adapting-to-other-domains) for a file-by-file guide to forking it for agriculture, equipment maintenance, environmental monitoring, home inspection, and more.
+
 After the original author's family developed severe bee allergies, this project transitioned from private to open source. The app has been used on a trial basis for several months to manage multiple hives and inspections, and was released to internal testers on TestFlight (iOS).
 
 **What makes this unique:** HiveGuide solves the practical challenges of field inspections -- your hands are full, covered in propolis, or wearing thick gloves, yet you need to capture detailed observations for later analysis. Voice transcription enables hands-free data entry, AI extraction structures that data automatically (identifying queen sightings, brood patterns, pest signs), and an intelligent advisor helps you apply domain-specific knowledge when you need it most.
 
 The AI advisor uses a multi-source RAG architecture that routes queries between personal inspection history and authoritative literature. The routing strategy was systematically evaluated against six alternatives and documented in `publications/strategies_comparison.pdf`.
 
-**Beyond beekeeping:** While built for beekeeping, this architecture could be applied to any domain requiring field inspections that rely heavily on past data and niche domain knowledge -- agriculture, equipment maintenance, environmental monitoring, etc.
+**Beyond beekeeping:** While built for beekeeping, this architecture could be applied to any domain requiring field inspections that rely heavily on past data and niche domain knowledge -- agriculture, equipment maintenance, environmental monitoring, etc. See [Adapting to Other Domains](#adapting-to-other-domains) for a concrete, file-by-file guide to forking it for your own use case.
 
 ## Demos
 
@@ -590,6 +592,72 @@ Contributors could tackle these roadmap items:
 - Push notifications for action items
 - Hive analytics dashboard
 - Export inspection reports
+
+## Adapting to Other Domains
+
+HiveGuide is beekeeping-flavored, but the underlying system is a **general pattern for hands-free field inspections**: capture observations by voice, extract them into structured records and action items, and answer questions using both your own history and an authoritative knowledge base. Nothing about that pipeline is bee-specific — the domain knowledge lives in a small, well-isolated set of files.
+
+If your problem looks like *"someone is on-site with their hands full, needs to record what they observe, wants that turned into structured data and follow-up tasks, and later wants an assistant that can reason over both their records and reference material,"* this codebase is a strong starting point.
+
+### What you get for free (the reusable core)
+
+These pieces are domain-agnostic and generally need **no changes**:
+
+- **Hands-free capture** — near real-time streaming transcription on iOS (AssemblyAI) with batch transcription fallback (OpenAI Whisper). See [AI Transcription](#features).
+- **Cross-platform delivery** — one React Native codebase for iOS and web, served by a shared FastAPI backend.
+- **Free-form speech → structured data** — an LLM extraction step turns a spoken narrative into typed fields.
+- **Action items with due dates** — follow-up tasks are extracted from the same narrative and dated.
+- **Multi-source RAG assistant** — an LLM intent classifier routes each question to your personal structured data (SQL), a document corpus (pgvector similarity search), or both. See [AI Assistant Architecture](#ai-assistant-architecture).
+- **Supporting infrastructure** — authentication with admin approval, photo uploads, sharing via circles, Alembic migrations, and Railway/Docker deployment.
+
+### The domain model (rename the nouns)
+
+The core hierarchy is **owner → asset → inspection**, expressed in beekeeping terms as *user → hive → inspection*. To re-theme it, map those two nouns onto your domain and rename them in the data model and UI:
+
+| Layer | Beekeeping term | Where it lives |
+|-------|-----------------|----------------|
+| Top-level asset | `Hive` | `Hive` / `Inspection` SQLAlchemy models in `backend/main.py`; types in `shared/types.ts`; screens under `mobile/src/screens/` (`HivesScreen`, `AddHiveScreen`, etc.) |
+| Inspection event | `Inspection` | `Inspection` model + `/inspections` endpoints in `backend/main.py`; `InspectionFormScreen.tsx`, `ViewInspectionsScreen.tsx` |
+
+### What to change (checklist with file anchors)
+
+1. **Structured extraction schema** — what fields get pulled out of the transcription.
+   - Backend: the `system_prompt` and `analyze_transcription_with_gpt()` in `backend/main.py` (currently extracts bee fields like `queen_visible`, `eggs_visible`, `capped_brood_visible`, `laying_pattern`, `weather`, `temperature`). Replace with your domain's fields.
+   - Types: `shared/types.ts` (structured-data shape shared by web + iOS).
+   - UI: the form fields rendered/auto-populated in `mobile/src/screens/InspectionFormScreen.tsx`.
+   - Schema/migrations: add or rename columns via `backend/alembic/` if you persist new fields.
+
+2. **Action-item extraction & any seasonal logic** — `backend/utils/llm_analyzer.py` (`_get_system_prompt()` defines what counts as a follow-up task; `_is_winter_month()` and related date logic add seasonally-aware suggestions). Retune the prompt for your domain's tasks.
+
+3. **Domain "tips" / calendar** — `shared/monthlyTips.ts` is a hardcoded month-by-month beekeeping calendar surfaced in the UI. Replace or remove it.
+
+4. **RAG knowledge base** — swap the reference literature for your domain:
+   - Register your sources in `PDF_SOURCES` in `backend/rag/config.py` (with titles, URLs, and **licensing/attribution** — see `backend/rag/sources_licensing.md`).
+   - Download them with `backend/scripts/download_rag_sources.py`, then (re)generate embeddings with `backend/scripts/populate_embeddings_langchain.py`. See `backend/rag/README_SOURCES.md`.
+
+5. **Assistant prompts & routing** — `backend/rag/langchain_service.py` contains beekeeping-specific wording in `classify_user_intent()` (intent categories/examples) and the agent prompts, plus `backend/rag/user_data_tool.py` (how personal data is described to the model). Rewrite these for your domain's questions.
+
+6. **Branding & vocabulary** — the app name, user-facing copy, and icons/assets (`mobile/ios/HiveGuideiOS/Images.xcassets`, `mobile/src/shared/`). The app name has already been migrated once (HiveScribe → HiveGuide), so the surface area here is small.
+
+### Example domain mappings
+
+| Domain | Asset (`Hive` →) | Inspection (`Inspection` →) | Example structured fields | Knowledge corpus |
+|--------|------------------|------------------------------|---------------------------|------------------|
+| Equipment / HVAC maintenance | Unit / Asset | Service visit | refrigerant level, filter status, fault codes | manufacturer manuals, service bulletins |
+| Crop scouting / agriculture | Field / Plot | Scouting report | pest pressure, growth stage, soil moisture | extension guides, IPM references |
+| Environmental monitoring | Site | Site survey | water quality readings, species counts | regulatory standards, protocols |
+| Property / home inspection | Property | Inspection report | roof condition, electrical, moisture | building codes, inspection standards |
+
+### Suggested fork workflow
+
+1. Fork the repo and get it running as-is with the [Quick Start](#quick-start) so you have a known-good baseline.
+2. Rename the two core nouns and their columns/types, then run a migration.
+3. Rewrite the structured-extraction schema (backend prompt + `shared/types.ts` + form UI) and confirm end-to-end capture works.
+4. Retune the action-item prompt and remove/replace the seasonal tips.
+5. Replace the RAG sources and regenerate embeddings.
+6. Rewrite the assistant's intent-classification and agent prompts for your domain's questions.
+
+> **Licensing note:** HiveGuide is released under Creative Commons **No Commercial** (see [LICENSE](LICENSE)). Forking for non-commercial use is fine within those terms; for commercial use, contact the author for permission.
 
 ## Contributing & Cross-Platform Development
 
