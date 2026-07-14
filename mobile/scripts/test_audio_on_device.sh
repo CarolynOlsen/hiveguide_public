@@ -49,8 +49,8 @@ fi
 echo -e "${BLUE}🔨 Building app...${NC}"
 cd "$(dirname "$0")/../ios"
 
-xcodebuild -workspace HiveScribeiOS.xcworkspace \
-  -scheme HiveScribeiOS \
+xcodebuild -workspace HiveGuideiOS.xcworkspace \
+  -scheme HiveGuideiOS \
   -configuration Debug \
   -derivedDataPath ./build \
   -destination "id=$DEVICE_ID" \
@@ -66,7 +66,7 @@ echo -e "${GREEN}✅ Build successful${NC}\n"
 
 # Find the built app
 echo -e "${BLUE}📦 Locating built app...${NC}"
-APP_PATH=$(find ./build/Build/Products/Debug-iphoneos -name "HiveScribeiOS.app" | head -1)
+APP_PATH=$(find ./build/Build/Products/Debug-iphoneos -name "HiveGuideiOS.app" | head -1)
 if [ -z "$APP_PATH" ]; then
     echo -e "${RED}❌ Could not find built app${NC}"
     exit 1
@@ -91,7 +91,7 @@ echo "Test started at: $(date)" > "$TEST_DIR/test_start_marker.txt"
 # Start log streaming in background
 echo -e "${BLUE}📝 Starting log capture...${NC}"
 xcrun devicectl device log stream --device "$DEVICE_ID" \
-  --predicate 'subsystem == "com.hiveguide.audio" OR processImagePath CONTAINS "HiveScribe" OR senderImagePath CONTAINS "HiveScribe"' \
+  --predicate 'subsystem == "com.hiveguide.audio" OR processImagePath CONTAINS "HiveGuide" OR senderImagePath CONTAINS "HiveGuide"' \
   > "$TEST_DIR/runtime_log.txt" 2>&1 &
 LOG_PID=$!
 echo -e "${GREEN}✅ Logging started (PID: $LOG_PID)${NC}\n"
@@ -101,7 +101,7 @@ sleep 2
 
 # Launch the app
 echo -e "${BLUE}🚀 Launching app...${NC}"
-BUNDLE_ID="org.reactjs.native.example.HiveScribeiOS"
+BUNDLE_ID="com.carolynolsen.hiveguide"
 
 # Try to launch - this will fail if app crashes, which is useful
 xcrun devicectl device process launch --device "$DEVICE_ID" "$BUNDLE_ID" 2>&1 | tee "$TEST_DIR/launch_log.txt" || true
@@ -131,7 +131,7 @@ echo -e "\n${BLUE}🔍 Checking for crash reports...${NC}"
 CRASH_LIST="$TEST_DIR/crash_list.txt"
 xcrun devicectl device info crashlogs list --device "$DEVICE_ID" 2>&1 | tee "$CRASH_LIST"
 
-# Look for recent HiveScribe crashes
+# Look for recent HiveGuide crashes
 if grep -i "hiveguide" "$CRASH_LIST" | head -5 > "$TEST_DIR/recent_crashes.txt"; then
     echo -e "${RED}❌ CRASH DETECTED!${NC}\n"
 
@@ -181,7 +181,7 @@ echo -e "${BLUE}📊 Generating test summary...${NC}"
 SUMMARY_FILE="$TEST_DIR/TEST_SUMMARY.txt"
 
 cat > "$SUMMARY_FILE" << EOF
-HiveScribe iOS Audio Test Report
+HiveGuide iOS Audio Test Report
 ================================
 Date: $(date)
 Device: $DEVICE_NAME

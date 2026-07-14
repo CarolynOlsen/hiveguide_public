@@ -23,5 +23,7 @@ openrouter_api_key: "your-openrouter-api-key-here"
 apple_id: "your-apple-id@example.com"
 apple_app_password: "your-app-specific-password-here"
 
-# AssemblyAI API key (for transcription - optional alternative to OpenAI Whisper)
+# AssemblyAI API key (powers the iOS near real-time streaming transcription;
+# the backend uses it to mint short-lived streaming tokens via /api/assembly-ai-token)
+# Get your key from: https://www.assemblyai.com/
 assembly_ai_api_key: "your-assemblyai-api-key-here"

@@ -9,8 +9,8 @@ set -e  # Exit on error
 # Configuration
 APP_ENTRY="main"
 HOST_PORT=8000
-IMAGE_NAME="hivescribe"
-CONTAINER_NAME="hivescribe_container"
+IMAGE_NAME="hiveguide"
+CONTAINER_NAME="hiveguide_container"
 
 # Determine root directory (2 levels up from script location)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

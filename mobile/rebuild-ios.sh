@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# HiveScribe iOS Rebuild and Reinstall Script
+# HiveGuide iOS Rebuild and Reinstall Script
 # This script ensures a completely clean build with no cached JavaScript
 
 set -e  # Exit on any error
 
-echo "🐝 HiveScribe iOS Rebuild Script"
+echo "🐝 HiveGuide iOS Rebuild Script"
 echo "=================================="
 echo ""
 echo "This script will perform a complete clean rebuild to ensure no cached JavaScript is running."
@@ -185,7 +185,7 @@ if xcrun xctrace list devices 2>/dev/null | grep -q "$DEVICE_UDID"; then
         echo -e "${GREEN}✅ App successfully installed on iPhone!${NC}"
         echo ""
         echo -e "${BLUE}📱 IMPORTANT: To ensure you're running the latest code:${NC}"
-        echo -e "${YELLOW}1. Force close the HiveScribe app if it's running${NC}"
+        echo -e "${YELLOW}1. Force close the HiveGuide app if it's running${NC}"
         echo -e "${YELLOW}2. Open the app fresh from the home screen${NC}"
         echo -e "${YELLOW}3. If you still see old behavior, shake the device and tap 'Reload'${NC}"
         echo ""

@@ -3,7 +3,7 @@
 # Audio Testing Script for iOS
 # This script helps test audio functionality
 
-echo "🎵 HiveScribe iOS Audio Testing Script"
+echo "🎵 HiveGuide iOS Audio Testing Script"
 echo "======================================"
 
 # Check if we're in the right directory
@@ -31,13 +31,13 @@ fi
 
 echo ""
 echo "📋 Checking Info.plist for audio permissions..."
-if grep -q "NSMicrophoneUsageDescription" HiveScribeiOS/Info.plist; then
+if grep -q "NSMicrophoneUsageDescription" HiveGuideiOS/Info.plist; then
     echo "✅ Microphone permission description found"
 else
     echo "❌ Missing NSMicrophoneUsageDescription in Info.plist"
 fi
 
-if grep -q "UIBackgroundModes" HiveScribeiOS/Info.plist; then
+if grep -q "UIBackgroundModes" HiveGuideiOS/Info.plist; then
     echo "✅ Background audio mode found"
 else
     echo "❌ Missing UIBackgroundModes in Info.plist"
@@ -45,13 +45,13 @@ fi
 
 echo ""
 echo "🔍 Checking AudioStreamingModule files..."
-if [ -f "HiveScribeiOS/AudioStreamingModule.swift" ]; then
+if [ -f "HiveGuideiOS/AudioStreamingModule.swift" ]; then
     echo "✅ AudioStreamingModule.swift exists"
 else
     echo "❌ AudioStreamingModule.swift missing"
 fi
 
-if [ -f "HiveScribeiOS/AudioStreamingModule.m" ]; then
+if [ -f "HiveGuideiOS/AudioStreamingModule.m" ]; then
     echo "✅ AudioStreamingModule.m exists"
 else
     echo "❌ AudioStreamingModule.m missing"
@@ -62,10 +62,10 @@ echo "🏗️  Building project..."
 # Try to build for physical device if available, otherwise use simulator
 if xcrun simctl list devices | grep -q "Carolyn's Phone of Doom"; then
     echo "📱 Building for physical device: Carolyn's Phone of Doom"
-    xcodebuild -workspace HiveScribeiOS.xcworkspace -scheme HiveScribeiOS -configuration Debug -destination 'platform=iOS,name=Carolyn'\''s Phone of Doom' build
+    xcodebuild -workspace HiveGuideiOS.xcworkspace -scheme HiveGuideiOS -configuration Debug -destination 'platform=iOS,name=Carolyn'\''s Phone of Doom' build
 else
     echo "📱 Building for simulator: iPhone 16"
-    xcodebuild -workspace HiveScribeiOS.xcworkspace -scheme HiveScribeiOS -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 16' build
+    xcodebuild -workspace HiveGuideiOS.xcworkspace -scheme HiveGuideiOS -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 16' build
 fi
 
 if [ $? -eq 0 ]; then

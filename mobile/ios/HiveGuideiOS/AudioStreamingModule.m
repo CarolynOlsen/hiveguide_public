@@ -1,6 +1,6 @@
 //
 //  AudioStreamingModule.m
-//  HiveScribeiOS
+//  HiveGuideiOS
 //
 //  Bridge between Swift and React Native
 //

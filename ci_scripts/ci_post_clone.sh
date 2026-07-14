@@ -65,9 +65,9 @@ echo "Pods directory contents:"
 ls -la Pods/ | head -10
 echo ""
 echo "Checking for Target Support Files:"
-if [ -d "Pods/Target Support Files/Pods-HiveScribeiOS" ]; then
+if [ -d "Pods/Target Support Files/Pods-HiveGuideiOS" ]; then
     echo "✅ Target Support Files directory exists"
-    ls -la "Pods/Target Support Files/Pods-HiveScribeiOS/" | head -10
+    ls -la "Pods/Target Support Files/Pods-HiveGuideiOS/" | head -10
 else
     echo "❌ Warning: Target Support Files directory not found"
 fi

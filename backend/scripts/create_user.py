@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Create a regular (non-admin) user for HiveScribe
+Create a regular (non-admin) user for HiveGuide
 """
 
 import os
@@ -129,7 +129,7 @@ def create_user(User, database_url, email=None, password=None):
 
 def main():
     """Main function"""
-    print("🐝 HiveScribe User Creation Script")
+    print("🐝 HiveGuide User Creation Script")
     print("=" * 40)
     
     # Setup imports and paths

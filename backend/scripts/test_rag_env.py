@@ -120,7 +120,7 @@ def check_rag_chain() -> None:
 
 
 def main() -> int:
-    print("== HiveScribe RAG environment self-test ==\n")
+    print("== HiveGuide RAG environment self-test ==\n")
     check_env_vars()
     check_config_keys()
     check_db_connection()

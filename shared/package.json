@@ -13,11 +13,11 @@
     "typecheck": "tsc --noEmit"
   },
   "keywords": [
-    "hivescribe",
+    "hiveguide",
     "beekeeping",
     "shared"
   ],
-  "author": "HiveScribe Team",
+  "author": "HiveGuide Team",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.0.0",

@@ -84,7 +84,7 @@ class UserHiveDataTool(BaseTool):
             user_hive_ids = self._get_accessible_hive_ids(db)
             
             if not user_hive_ids:
-                return "No hives found for this user. To get started with HiveScribe, you'll need to create your first hive using the main application interface."
+                return "No hives found for this user. To get started with HiveGuide, you'll need to create your first hive using the main application interface."
             
             # Filter by specific hive if requested
             hives_query = db.query(Hive).filter(Hive.id.in_(user_hive_ids))

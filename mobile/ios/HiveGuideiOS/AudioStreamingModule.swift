@@ -1,6 +1,6 @@
 //
 //  AudioStreamingModule.swift
-//  HiveScribeiOS
+//  HiveGuideiOS
 //
 //  Real-time audio streaming module using AVAudioEngine
 //

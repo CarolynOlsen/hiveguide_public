@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test runner script for HiveScribe
+Test runner script for HiveGuide
 """
 import subprocess
 import sys
@@ -23,7 +23,7 @@ def run_command(command, description):
 
 def main():
     """Run all tests and checks"""
-    print("🐝 Running HiveScribe test suite...")
+    print("🐝 Running HiveGuide test suite...")
     
     # Set test database URL if not already set
     if not os.environ.get("DATABASE_URL"):

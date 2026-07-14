@@ -45,7 +45,7 @@ The app has not yet been expanded to Android.
 ### Core Features
 - **Voice Recording**: Record hive inspections using your device's microphone
 - **Near Real-time Streaming Transcription (iOS)**: See your speech transcribed with ~2 second delay as you speak during inspections
-- **AI Transcription**: Speech-to-text using OpenAI Whisper (batch and near real-time modes)
+- **AI Transcription**: Near real-time streaming speech-to-text via AssemblyAI (iOS), with OpenAI Whisper for batch transcription (web, and as the iOS fallback)
 - **Smart Analysis**: AI-powered extraction of hive data (eggs, brood, resources)
 - **Photo Uploads**: Attach photos to inspections (camera or library on iOS)
 - **AI Advisor**: Intelligent RAG chatbot that combines personal hive data with beekeeping knowledge
@@ -56,11 +56,10 @@ The app has not yet been expanded to Android.
 - **Mobile Optimized**: Native iOS app and responsive web design
 
 ### Streaming Transcription Features (iOS Only)
-- **Near Real-time Transcription**: Words appear with ~2 second delay as you speak
-- **High Accuracy**: Uses OpenAI Whisper for industry-leading transcription accuracy
-- **Automatic Fallback**: Gracefully switches to batch transcription if unavailable
-- **Network Resilient**: Handles connection issues with automatic reconnection
-- **Cost Efficient**: Uses existing OpenAI API, no additional service needed
+- **Near Real-time Transcription**: Words appear with ~2 second delay as you speak, powered by AssemblyAI's streaming speech-to-text API
+- **Direct Streaming**: Audio streams from the app straight to AssemblyAI over a WebSocket. The backend only mints short-lived access tokens (`POST /api/assembly-ai-token`), so raw audio never passes through our server
+- **Automatic Fallback**: Gracefully switches to batch transcription (OpenAI Whisper via `POST /transcribe`) if streaming is unavailable
+- **Network Resilient**: Handles connection issues with automatic reconnection and token refresh
 
 See `mobile/AUDIO_TESTING_GUIDE.md` for setup instructions.
 
@@ -85,7 +84,7 @@ The LLM classifier approach was selected for HiveGuide because it provides stron
 
 ```mermaid
 flowchart TD
-    A[User Query: Is my hive at normal weight for October?] --> B[Intent Classifier GPT-4o]
+    A[User Query: Is my hive at normal weight for October?] --> B[Intent Classifier LLM]
     
     B --> C{Question Type?}
     C -->|Personal Data| D[User Hive Data Tool]
@@ -113,7 +112,7 @@ flowchart TD
 
 ### How It Works
 
-1. **Intent Classification**: Every question is analyzed by GPT-4o to understand what type of information you're seeking:
+1. **Intent Classification**: Every question is analyzed by the configured LLM (`gpt-oss-120b` via OpenRouter by default, set in `backend/rag/config.py`) to understand what type of information you're seeking:
    - **Personal queries**: "Which of my hives need attention?" 
    - **General knowledge**: "What are signs of varroa mites?"
    - **Combined queries**: "Is the weight of my Franksville 4 hive adequate for winter?"
@@ -179,7 +178,8 @@ This table shows which components are used by each platform, helping you underst
 | `├─ HiveGuideiOS.xcworkspace` | | ✓ | Xcode workspace file |
 | `├─ HiveGuideiOS.xcodeproj/` | | ✓ | Xcode project configuration |
 | `├─ HiveGuideiOS/` | | ✓ | Native iOS source files |
-| `│  ├─ AppDelegate.mm` | | ✓ | iOS app lifecycle |
+| `│  ├─ AppDelegate.swift` | | ✓ | iOS app lifecycle |
+| `│  ├─ AudioStreamingModule.swift/.m` | | ✓ | Native audio capture bridge for streaming transcription |
 | `│  ├─ Info.plist` | | ✓ | iOS app permissions & config |
 | `│  ├─ Images.xcassets` | | ✓ | App icons & launch images |
 | `├─ Podfile` | | ✓ | CocoaPods dependency management |
@@ -259,10 +259,12 @@ This table shows which components are used by each platform, helping you underst
 3. **Set up local configuration**
    ```bash
    # Create config.yaml in project root (this file is gitignored)
+   # See config.yaml.example for all supported keys
    cat > config.yaml << EOF
    database_url: postgresql://user:pass@host:port/dbname
-   openai_api_key: sk-your-key-here
-   openrouter_api_key: sk-or-your-key-here
+   openai_api_key: sk-your-key-here          # Whisper batch transcription + inspection analysis
+   openrouter_api_key: sk-or-your-key-here   # AI Advisor / RAG LLM
+   assembly_ai_api_key: your-assemblyai-key  # iOS near real-time streaming transcription
    EOF
    ```
 
@@ -357,8 +359,9 @@ npm test
 1. **Set environment variables in Railway:**
    ```
    DATABASE_URL=postgresql://...  (automatically set by Railway)
-   OPENAI_API_KEY=sk-...
-   OPENROUTER_API_KEY=sk-or-...
+   OPENAI_API_KEY=sk-...          (Whisper batch transcription + inspection analysis)
+   OPENROUTER_API_KEY=sk-or-...   (AI Advisor / RAG LLM)
+   ASSEMBLY_AI_API_KEY=...        (mints tokens for iOS near real-time streaming transcription)
    ```
 
 2. **Deploy:**
@@ -450,6 +453,7 @@ hiveguide_public/
 │   ├── ios/                   # iOS native code (iOS only)
 │   │   ├── HiveGuideiOS.xcodeproj
 │   │   ├── HiveGuideiOS.xcworkspace
+│   │   ├── HiveGuideiOS/     # AppDelegate, AudioStreamingModule (streaming transcription), Info.plist
 │   │   ├── Podfile           # CocoaPods dependencies
 │   │   └── ...
 │   ├── android/               # Android starter files (not functional)
@@ -574,7 +578,7 @@ All endpoints are shared between web and iOS platforms.
 ## Known Issues & Roadmap
 
 ### Current Issues
-- **Circles**: These were implemented in the React.js web version, and the backend still exist, but it's not available in the React Native app. This is functionality so that hives and inspections can be shared.
+- **Circles (Hive Sharing)**: Circles let beekeepers share hives and inspections. The backend endpoints are fully implemented, and the iOS app can create, list, and delete circles (**More → Hive Sharing**). However, adding and removing circle *members* is not yet wired up in the app UI, so end-to-end sharing isn't functional yet. This feature originated in the earlier React.js web version.
 - **Web App Navigation**: Some pages are missing the bottom navigation bar. Web only.
 
 ### Potential Future Development

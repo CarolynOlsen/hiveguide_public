@@ -130,7 +130,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content={"detail": exc.errors()},
     )
 
-print("[DEBUG] Starting HiveScribe app...")
+print("[DEBUG] Starting HiveGuide app...")
 
 # Load configuration from config.yaml if present (env vars take precedence)
 config = {}

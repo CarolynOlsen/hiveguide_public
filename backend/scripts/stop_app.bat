@@ -5,7 +5,7 @@ REM Handles both Docker container and local uvicorn process
 REM -------------------------------------------------
 
 REM ==== CONFIGURATION ==================================================
-set CONTAINER_NAME=hivescribe_app
+set CONTAINER_NAME=hiveguide_app
 set HOST_PORT=8000
 REM =====================================================================
 

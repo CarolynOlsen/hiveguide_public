@@ -1,5 +1,5 @@
 /**
- * HiveScribe Mobile App
+ * HiveGuide Mobile App
  * Modern Beekeeping Assistant for iOS
  *
  * @format

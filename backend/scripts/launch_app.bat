@@ -8,8 +8,8 @@ REM -------------------------------------------------
 REM ==== CONFIGURATION ==================================================
 set ROOT=%~dp0..\..
 pushd "%ROOT%"
-set IMAGE_NAME=hivescribe
-set CONTAINER_NAME=hivescribe_app
+set IMAGE_NAME=hiveguide
+set CONTAINER_NAME=hiveguide_app
 set HOST_PORT=8000
 set APP_ENTRY=main
 REM =====================================================================

@@ -53,16 +53,16 @@ if [ ! -f "package.json" ]; then
 fi
 
 echo -e "${BLUE}Check 1: AudioStreamingModule.swift exists${NC}"
-if [ -f "ios/HiveScribeiOS/AudioStreamingModule.swift" ]; then
+if [ -f "ios/HiveGuideiOS/AudioStreamingModule.swift" ]; then
     pass "AudioStreamingModule.swift found"
 else
-    fail "AudioStreamingModule.swift not found at ios/HiveScribeiOS/"
+    fail "AudioStreamingModule.swift not found at ios/HiveGuideiOS/"
 fi
 
 echo ""
 echo -e "${BLUE}Check 2: Microphone permission in Info.plist${NC}"
-if grep -q "NSMicrophoneUsageDescription" ios/HiveScribeiOS/Info.plist 2>/dev/null; then
-    PERM_TEXT=$(grep -A 1 "NSMicrophoneUsageDescription" ios/HiveScribeiOS/Info.plist | tail -1 | sed 's/<[^>]*>//g' | xargs)
+if grep -q "NSMicrophoneUsageDescription" ios/HiveGuideiOS/Info.plist 2>/dev/null; then
+    PERM_TEXT=$(grep -A 1 "NSMicrophoneUsageDescription" ios/HiveGuideiOS/Info.plist | tail -1 | sed 's/<[^>]*>//g' | xargs)
     pass "Microphone permission configured"
     info "Permission text: \"$PERM_TEXT\""
 else
@@ -71,11 +71,11 @@ fi
 
 echo ""
 echo -e "${BLUE}Check 3: Audio Transport Security settings${NC}"
-if grep -q "NSAppTransportSecurity" ios/HiveScribeiOS/Info.plist 2>/dev/null; then
+if grep -q "NSAppTransportSecurity" ios/HiveGuideiOS/Info.plist 2>/dev/null; then
     pass "NSAppTransportSecurity configured"
 
     # Check for AssemblyAI domains
-    if grep -q "assemblyai.com" ios/HiveScribeiOS/Info.plist; then
+    if grep -q "assemblyai.com" ios/HiveGuideiOS/Info.plist; then
         pass "AssemblyAI domain exceptions configured"
     else
         warn "AssemblyAI domain exceptions not found in Info.plist"
@@ -87,21 +87,21 @@ fi
 echo ""
 echo -e "${BLUE}Check 4: React Native bridge module registration${NC}"
 # Check if the module has the required @objc decorator
-if grep -q "@objc(AudioStreamingModule)" ios/HiveScribeiOS/AudioStreamingModule.swift 2>/dev/null; then
+if grep -q "@objc(AudioStreamingModule)" ios/HiveGuideiOS/AudioStreamingModule.swift 2>/dev/null; then
     pass "AudioStreamingModule has @objc decorator"
 else
     fail "AudioStreamingModule missing @objc decorator"
 fi
 
 # Check for requiresMainQueueSetup
-if grep -q "requiresMainQueueSetup" ios/HiveScribeiOS/AudioStreamingModule.swift 2>/dev/null; then
+if grep -q "requiresMainQueueSetup" ios/HiveGuideiOS/AudioStreamingModule.swift 2>/dev/null; then
     pass "requiresMainQueueSetup implemented"
 else
     warn "requiresMainQueueSetup not found (may cause warnings)"
 fi
 
 # Check for supportedEvents
-if grep -q "supportedEvents" ios/HiveScribeiOS/AudioStreamingModule.swift 2>/dev/null; then
+if grep -q "supportedEvents" ios/HiveGuideiOS/AudioStreamingModule.swift 2>/dev/null; then
     pass "supportedEvents implemented"
 else
     fail "supportedEvents not found (required for event emission)"
@@ -109,7 +109,7 @@ fi
 
 echo ""
 echo -e "${BLUE}Check 5: AVFoundation framework import${NC}"
-if grep -q "import AVFoundation" ios/HiveScribeiOS/AudioStreamingModule.swift 2>/dev/null; then
+if grep -q "import AVFoundation" ios/HiveGuideiOS/AudioStreamingModule.swift 2>/dev/null; then
     pass "AVFoundation imported"
 else
     fail "AVFoundation not imported"
@@ -117,7 +117,7 @@ fi
 
 echo ""
 echo -e "${BLUE}Check 6: React Native import${NC}"
-if grep -q "import React" ios/HiveScribeiOS/AudioStreamingModule.swift 2>/dev/null; then
+if grep -q "import React" ios/HiveGuideiOS/AudioStreamingModule.swift 2>/dev/null; then
     pass "React Native framework imported"
 else
     fail "React Native framework not imported"
@@ -174,10 +174,10 @@ fi
 
 echo ""
 echo -e "${BLUE}Check 11: Enhanced logging configured${NC}"
-if grep -q "os.log" ios/HiveScribeiOS/AudioStreamingModule.swift 2>/dev/null; then
+if grep -q "os.log" ios/HiveGuideiOS/AudioStreamingModule.swift 2>/dev/null; then
     pass "Enhanced logging (os.log) configured"
 
-    if grep -q "com.hiveguide.audio" ios/HiveScribeiOS/AudioStreamingModule.swift 2>/dev/null; then
+    if grep -q "com.hiveguide.audio" ios/HiveGuideiOS/AudioStreamingModule.swift 2>/dev/null; then
         pass "Audio subsystem logger configured"
     else
         warn "Audio subsystem logger not found"
